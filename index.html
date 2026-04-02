@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guardian SOS — Company Signup</title>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f0f0f;
+      color: #f0f0f0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1a1a;
+      border-bottom: 2px solid #cc0000;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    header .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: #cc0000;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    header p {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1a0000, #1a1a1a);
+      padding: 48px 24px;
+      text-align: center;
+      border-bottom: 1px solid #2a2a2a;
+    }
+
+    .hero h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .hero h2 span { color: #cc0000; }
+
+    .hero p {
+      font-size: 16px;
+      color: #aaa;
+      max-width: 560px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .feature {
+      background: #1f1f1f;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: 13px;
+      color: #ccc;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature span { font-size: 18px; }
+
+    .container {
+      max-width: 640px;
+      margin: 40px auto;
+      padding: 0 20px 60px;
+    }
+
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    .card .subtitle {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #cc0000;
+      margin: 24px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #2a2a2a;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 500px) {
+      .form-row { grid-template-columns: 1fr; }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: #bbb;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    label .required { color: #cc0000; margin-left: 3px; }
+
+    input, select {
+      width: 100%;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: #f0f0f0;
+      font-size: 15px;
+      transition: border-color 0.2s;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus, select:focus {
+      border-color: #cc0000;
+    }
+
+    input::placeholder { color: #555; }
+
+    .color-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .color-row input[type="color"] {
+      width: 54px;
+      height: 46px;
+      padding: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .color-row input[type="text"] {
+      flex: 1;
+    }
+
+    .pricing-box {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .pricing-box .price-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #bbb;
+      padding: 4px 0;
+    }
+
+    .pricing-box .price-line.total {
+      border-top: 1px solid #333;
+      margin-top: 8px;
+      padding-top: 10px;
+      font-weight: 700;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    .pricing-box .price-line span:last-child { color: #cc0000; }
+    .pricing-box .price-line.total span:last-child { color: #4caf50; }
+
+    .note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: #cc0000;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .submit-btn:hover { background: #aa0000; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #444; cursor: not-allowed; }
+
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .success-card {
+      display: none;
+      background: #0a1f0a;
+      border: 1px solid #2e7d32;
+      border-radius: 16px;
+      padding: 40px 32px;
+      text-align: center;
+    }
+
+    .success-card .icon { font-size: 56px; margin-bottom: 16px; }
+    .success-card h3 { font-size: 22px; color: #4caf50; margin-bottom: 10px; }
+    .success-card p { color: #aaa; font-size: 15px; line-height: 1.6; }
+
+    .success-card .code-box {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 20px 0;
+      font-size: 13px;
+      color: #888;
+    }
+
+    .error-msg {
+      background: #1f0000;
+      border: 1px solid #cc0000;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #ff6666;
+      margin-top: 12px;
+      display: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: #444;
+      font-size: 13px;
+      border-top: 1px solid #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">🛡️</div>
+  <div>
+    <h1>Guardian SOS</h1>
+    <p>Emergency Response Platform</p>
+  </div>
+</header>
+
+<div class="hero">
+  <h2>Protect Your Team with <span>Guardian SOS</span></h2>
+  <p>A white-label emergency response app for security companies. Your branding, your officers, your clients — powered by our platform.</p>
+  <div class="features">
+    <div class="feature"><span>📍</span> Real-time location tracking</div>
+    <div class="feature"><span>🚨</span> Instant SOS alerts</div>
+    <div class="feature"><span>👮</span> Officer dashboard</div>
+    <div class="feature"><span>💊</span> Medical profiles</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- SIGNUP FORM -->
+  <div class="card" id="formCard">
+    <h3>Company Registration</h3>
+    <p class="subtitle">Fill in your details and we'll get you set up within 24 hours.</p>
+
+    <form id="signupForm">
+
+      <div class="section-label">Company Details</div>
+
+      <div class="form-group">
+        <label>Company Name <span class="required">*</span></label>
+        <input type="text" id="company_name" placeholder="ABC Security (Pty) Ltd" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Primary Colour <span class="required">*</span></label>
+          <div class="color-row">
+            <input type="color" id="colorPicker" value="#cc0000" oninput="syncColor(this.value)" />
+            <input type="text" id="primary_color" value="#cc0000" placeholder="#cc0000" oninput="syncPicker(this.value)" maxlength="7" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Logo URL <span style="color:#666">(optional)</span></label>
+          <input type="url" id="logo_url" placeholder="https://yoursite.com/logo.png" />
+        </div>
+      </div>
+
+      <div class="section-label">Contact Person</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name <span class="required">*</span></label>
+          <input type="text" id="contact_name" placeholder="John Smith" required />
+        </div>
+        <div class="form-group">
+          <label>Email Address <span class="required">*</span></label>
+          <input type="email" id="contact_email" placeholder="john@abcsecurity.co.za" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number <span class="required">*</span></label>
+        <input type="tel" id="contact_phone" placeholder="082 123 4567" required />
+      </div>
+
+      <div class="section-label">Subscription</div>
+
+      <div class="form-group">
+        <label>Number of Devices <span class="required">*</span></label>
+        <select id="device_count" onchange="updatePricing()" required>
+          <option value="">— Select —</option>
+          <option value="5">5 devices</option>
+          <option value="10">10 devices</option>
+          <option value="20">20 devices</option>
+          <option value="50">50 devices</option>
+          <option value="100">100 devices</option>
+        </select>
+      </div>
+
+      <div class="pricing-box" id="pricingBox" style="display:none">
+        <div class="price-line">
+          <span>Base fee</span>
+          <span>R500 / month</span>
+        </div>
+        <div class="price-line">
+          <span>Devices (<span id="deviceCountLabel">0</span> × R50)</span>
+          <span id="deviceCost">R0</span>
+        </div>
+        <div class="price-line total">
+          <span>Total per month</span>
+          <span id="totalCost">R0</span>
+        </div>
+      </div>
+      <p class="note">💡 You will receive an invoice after registration. Service activates once payment is confirmed.</p>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        <span>🚀</span> Submit Registration
+      </button>
+
+    </form>
+  </div>
+
+  <!-- SUCCESS CARD -->
+  <div class="card success-card" id="successCard">
+    <div class="icon">✅</div>
+    <h3>Registration Received!</h3>
+    <p>Thank you for registering with Guardian SOS. We have received your details and will review your application within <strong>24 hours</strong>.</p>
+    <div class="code-box">
+      Once your invoice is paid, you will receive your <strong>Company Registration Code</strong> via email. Your team can then install the Guardian SOS app and use the code to get started.
+    </div>
+    <p>Questions? WhatsApp us at <strong>+27 XX XXX XXXX</strong></p>
+  </div>
+
+</div>
+
+<footer>
+  © 2026 Guardian SOS · All rights reserved
+</footer>
+
+<script>
+  // ── Firebase config ──────────────────────────────
+  // REPLACE these values with your actual Firebase config
+  const firebaseConfig = {
+    apiKey: "REPLACE_WITH_YOUR_API_KEY",
+    authDomain: "REPLACE_WITH_YOUR_AUTH_DOMAIN",
+    projectId: "guardian-os-80042",
+    storageBucket: "REPLACE_WITH_YOUR_STORAGE_BUCKET",
+    messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
+    appId: "REPLACE_WITH_YOUR_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // ── EmailJS ──────────────────────────────────────
+  emailjs.init('_WKuuF_twjhvg9Y9X');
+
+  // ── Colour sync ──────────────────────────────────
+  function syncColor(val) {
+    document.getElementById('primary_color').value = val;
+  }
+  function syncPicker(val) {
+    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+      document.getElementById('colorPicker').value = val;
+    }
+  }
+
+  // ── Pricing calculator ───────────────────────────
+  function updatePricing() {
+    const count = parseInt(document.getElementById('device_count').value) || 0;
+    const base = 500;
+    const perDevice = 50;
+    const deviceCost = count * perDevice;
+    const total = base + deviceCost;
+    document.getElementById('deviceCountLabel').textContent = count;
+    document.getElementById('deviceCost').textContent = 'R' + deviceCost;
+    document.getElementById('totalCost').textContent = 'R' + total;
+    document.getElementById('pricingBox').style.display = count > 0 ? 'block' : 'none';
+  }
+
+  // ── Generate registration code ───────────────────
+  function generateCode(companyName) {
+    const prefix = companyName.replace(/[^a-zA-Z]/g, '').substring(0, 4).toUpperCase();
+    const suffix = Math.floor(1000 + Math.random() * 9000);
+    return prefix + suffix;
+  }
+
+  // ── Generate company ID ──────────────────────────
+  function generateCompanyId(companyName) {
+    return companyName.toLowerCase()
+      .replace(/[^a-z0-9]/g, '_')
+      .replace(/_+/g, '_')
+      .substring(0, 30) + '_' + Date.now();
+  }
+
+  // ── Form submit ──────────────────────────────────
+  document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const btn = document.getElementById('submitBtn');
+    const errorMsg = document.getElementById('errorMsg');
+    errorMsg.style.display = 'none';
+
+    // Gather values
+    const companyName = document.getElementById('company_name').value.trim();
+    const contactName = document.getElementById('contact_name').value.trim();
+    const contactEmail = document.getElementById('contact_email').value.trim();
+    const contactPhone = document.getElementById('contact_phone').value.trim();
+    const deviceCount = document.getElementById('device_count').value;
+    const logoUrl = document.getElementById('logo_url').value.trim();
+    const primaryColor = document.getElementById('primary_color').value.trim().replace('#', '');
+
+    if (!deviceCount) {
+      errorMsg.textContent = 'Please select the number of devices.';
+      errorMsg.style.display = 'block';
+      return;
+    }
+
+    // Show loading
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Submitting...';
+
+    try {
+      const registrationCode = generateCode(companyName);
+      const companyId = generateCompanyId(companyName);
+
+      // Save to Firestore
+      await db.collection('companies').doc(companyId).set({
+        name: companyName,
+        contactName: contactName,
+        contactEmail: contactEmail,
+        contactPhone: contactPhone,
+        logoUrl: logoUrl,
+        primaryColor: primaryColor,
+        maxDevices: parseInt(deviceCount),
+        registrationCode: registrationCode,
+        isActive: false,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      // Send email notification
+      await emailjs.send('service_0lqb4wo', 'template_qox5nkh', {
+        company_name: companyName,
+        contact_name: contactName,
+        contact_email: contactEmail,
+        contact_phone: contactPhone,
+        device_count: deviceCount,
+        logo_url: logoUrl || 'None provided',
+        primary_color: '#' + primaryColor,
+        registration_code: registrationCode,
+        company_id: companyId,
+      });
+
+      // Show success
+      document.getElementById('formCard').style.display = 'none';
+      document.getElementById('successCard').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } catch (err) {
+      console.error(err);
+      errorMsg.textContent = 'Something went wrong. Please try again or contact us directly.';
+      errorMsg.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '<span>🚀</span> Submit Registration';
+    }
+  });
+</script>
+
+</body>
+</html>
