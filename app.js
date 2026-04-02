@@ -37,11 +37,17 @@ function updatePricing() {
   document.getElementById('pricingBox').style.display = count > 0 ? 'block' : 'none';
 }
 
-// ── Generate registration code ───────────────────
-function generateCode(companyName) {
+// ── Generate registration codes ───────────────────
+function generateOfficerCode(companyName) {
   const prefix = companyName.replace(/[^a-zA-Z]/g, '').substring(0, 4).toUpperCase();
   const suffix = Math.floor(1000 + Math.random() * 9000);
-  return prefix + suffix;
+  return prefix + '-OFF-' + suffix;
+}
+
+function generateClientCode(companyName) {
+  const prefix = companyName.replace(/[^a-zA-Z]/g, '').substring(0, 4).toUpperCase();
+  const suffix = Math.floor(1000 + Math.random() * 9000);
+  return prefix + '-CLI-' + suffix;
 }
 
 // ── Generate company ID ──────────────────────────
@@ -65,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactName = document.getElementById('contact_name').value.trim();
     const contactEmail = document.getElementById('contact_email').value.trim();
     const contactPhone = document.getElementById('contact_phone').value.trim();
+    const emergencyPhone = document.getElementById('emergency_phone').value.trim();
     const deviceCount = document.getElementById('device_count').value;
     const logoUrl = document.getElementById('logo_url').value.trim();
     const primaryColor = document.getElementById('primary_color').value.trim().replace('#', '');
@@ -79,7 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
     btn.innerHTML = '<div class="spinner"></div> Submitting...';
 
     try {
-      const registrationCode = generateCode(companyName);
+      const officerCode = generateOfficerCode(companyName);
+      const clientCode = generateClientCode(companyName);
       const companyId = generateCompanyId(companyName);
 
       await db.collection('companies').doc(companyId).set({
@@ -87,10 +95,12 @@ document.addEventListener('DOMContentLoaded', function() {
         contactName: contactName,
         contactEmail: contactEmail,
         contactPhone: contactPhone,
+        emergencyPhone: emergencyPhone,
         logoUrl: logoUrl,
         primaryColor: primaryColor,
         maxDevices: parseInt(deviceCount),
-        registrationCode: registrationCode,
+        officerCode: officerCode,
+        clientCode: clientCode,
         isActive: false,
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
@@ -103,7 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
         device_count: deviceCount,
         logo_url: logoUrl || 'None provided',
         primary_color: '#' + primaryColor,
-        registration_code: registrationCode,
+        registration_code: '👮 OFFICER CODE: ' + officerCode + '\n👤 CLIENT CODE: ' + clientCode,
         company_id: companyId,
       });
 
