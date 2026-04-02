@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       });
 
-      await emailjs.send('service_lf1j05c', 'template_qox5nkh', {
+      await emailjs.send('service_sxhcn8m', 'template_qox5nkh', {
         company_name: companyName,
         contact_name: contactName,
         contact_email: contactEmail,
