@@ -6,8 +6,8 @@
   <title>Guardian SOS — Dispatcher Dashboard</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #f0f0f0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -686,8 +686,6 @@
   }
 
   db.collection('alerts')
-    .orderBy('timestamp', 'descending')
-    .limit(100)
     .onSnapshot(snapshot => {
       setConnected(true);
 
