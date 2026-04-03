@@ -318,6 +318,84 @@
       50% { box-shadow: 0 0 0 8px rgba(204,0,0,0.1); }
     }
 
+
+    /* LOGIN OVERLAY */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .login-box {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-box .logo-lg {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .login-box h2 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .login-box p {
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 28px;
+    }
+
+    .login-box input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: #f0f0f0;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      outline: none;
+    }
+
+    .login-box input:focus { border-color: #cc0000; }
+
+    .login-box button {
+      width: 100%;
+      background: #cc0000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .login-box button:hover { background: #aa0000; }
+    .login-box button:disabled { background: #444; cursor: not-allowed; }
+
+    .login-error {
+      color: #ff6666;
+      font-size: 13px;
+      margin-top: 10px;
+      min-height: 20px;
+    }
     @media (max-width: 768px) {
       .sidebar { width: 260px; }
       .detail-panel { width: 260px; }
@@ -330,7 +408,7 @@
   <div class="header-left">
     <div class="logo">🛡️</div>
     <div class="header-title">
-      <h1>Guardian SOS — Dispatcher</h1>
+      <h1 id="companyName">Guardian SOS — Dispatcher</h1>
       <p>Live Emergency Response Dashboard</p>
     </div>
   </div>
@@ -685,40 +763,108 @@
     document.getElementById('statusText').textContent = connected ? 'Live' : 'Disconnected';
   }
 
-  db.collection('alerts')
-    .onSnapshot(snapshot => {
-      setConnected(true);
+  let unsubscribe = null;
+  let currentCompanyId = null;
 
-      snapshot.docChanges().forEach(change => {
-        const id = change.doc.id;
-        const data = change.doc.data();
+  function startListening(companyId) {
+    if (unsubscribe) unsubscribe();
+    alerts = {};
+    markers = {};
+    currentCompanyId = companyId;
 
-        if (change.type === 'added') {
-          alerts[id] = data;
-          // Play alert for new active alerts
-          if (data.status === 'ACTIVE' && lastAlertCount > 0) {
-            playAlert();
+    unsubscribe = db.collection('alerts')
+      .where('companyId', '==', companyId)
+      .onSnapshot(snapshot => {
+        setConnected(true);
+
+        snapshot.docChanges().forEach(change => {
+          const id = change.doc.id;
+          const data = change.doc.data();
+
+          if (change.type === 'added') {
+            alerts[id] = data;
+            if (data.status === 'ACTIVE' && lastAlertCount > 0) {
+              playAlert();
+            }
+          } else if (change.type === 'modified') {
+            alerts[id] = data;
+          } else if (change.type === 'removed') {
+            delete alerts[id];
+            if (markers[id]) {
+              map.removeLayer(markers[id]);
+              delete markers[id];
+            }
           }
-        } else if (change.type === 'modified') {
-          alerts[id] = data;
-        } else if (change.type === 'removed') {
-          delete alerts[id];
-          if (markers[id]) {
-            map.removeLayer(markers[id]);
-            delete markers[id];
-          }
-        }
+        });
+
+        const activeCount = Object.values(alerts).filter(a => a.status === 'ACTIVE').length;
+        lastAlertCount = activeCount;
+
+        renderAlerts();
+        renderMarkers();
+      }, error => {
+        setConnected(false);
+        console.error('Firestore error:', error);
       });
+  }
 
-      const activeCount = Object.values(alerts).filter(a => a.status === 'ACTIVE').length;
-      lastAlertCount = activeCount;
+  // ── Login overlay ────────────────────────────
+  async function login() {
+    const code = document.getElementById('loginCode').value.trim().toUpperCase();
+    const errorEl = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+    if (!code) {
+      errorEl.textContent = 'Please enter your officer code.';
+      return;
+    }
+    btn.disabled = true;
+    btn.textContent = 'Verifying...';
+    errorEl.textContent = '';
 
-      renderAlerts();
-      renderMarkers();
-    }, error => {
-      setConnected(false);
-      console.error('Firestore error:', error);
-    });
+    try {
+      const query = await db.collection('companies')
+        .where('officerCode', '==', code)
+        .limit(1)
+        .get();
+
+      if (query.empty) {
+        errorEl.textContent = 'Invalid officer code. Please try again.';
+        btn.disabled = false;
+        btn.textContent = 'Access Dashboard';
+        return;
+      }
+
+      const company = query.docs[0];
+      const data = company.data();
+
+      if (!data.isActive) {
+        errorEl.textContent = 'This company subscription is suspended.';
+        btn.disabled = false;
+        btn.textContent = 'Access Dashboard';
+        return;
+      }
+
+      // Update header with company name
+      document.getElementById('companyName').textContent = data.name + ' — Dispatcher';
+
+      // Hide overlay
+      document.getElementById('loginOverlay').style.display = 'none';
+
+      // Start listening for this company
+      startListening(company.id);
+
+    } catch(e) {
+      errorEl.textContent = 'Error connecting. Please try again.';
+      btn.disabled = false;
+      btn.textContent = 'Access Dashboard';
+      console.error(e);
+    }
+  }
+
+  // Allow Enter key on login
+  document.getElementById('loginCode').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') login();
+  });
 
   // Update time-ago labels every 30 seconds
   setInterval(() => {
@@ -726,5 +872,17 @@
   }, 30000);
 </script>
 
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <div class="logo-lg">🛡️</div>
+    <h2>Dispatcher Access</h2>
+    <p>Enter your officer code to access the live dashboard for your company.</p>
+    <input type="text" id="loginCode" placeholder="OFFICER CODE" autocomplete="off" />
+    <button id="loginBtn" onclick="login()">Access Dashboard</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
 </body>
 </html>
