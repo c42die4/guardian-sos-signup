@@ -7,25 +7,21 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; }
-
-    /* NAV */
     nav { background: #111; border-bottom: 1px solid #1f1f1f; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
     .nav-brand { display: flex; align-items: center; gap: 10px; }
     .nav-icon { width: 34px; height: 34px; background: #cc0000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
     .nav-brand span { font-size: 16px; font-weight: 700; color: #fff; }
-    .nav-links { display: flex; gap: 8px; }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
     .nav-link { background: none; border: 1px solid #2a2a2a; border-radius: 6px; padding: 7px 14px; color: #aaa; font-size: 13px; cursor: pointer; text-decoration: none; transition: all 0.2s; }
     .nav-link:hover { border-color: #cc0000; color: #fff; }
     .nav-link.active { border-color: #cc0000; color: #fff; background: rgba(204,0,0,0.1); }
-
-    /* HERO */
+    .nav-saved { background: rgba(46,125,50,0.15); border: 1px solid #2e7d32; border-radius: 6px; padding: 5px 10px; color: #4caf50; font-size: 12px; display: none; align-items: center; gap: 6px; }
+    .nav-saved.visible { display: flex; }
     .hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px 40px; text-align: center; background: radial-gradient(ellipse at 50% 0%, rgba(204,0,0,0.08) 0%, transparent 70%); }
     .hero-badge { background: rgba(204,0,0,0.15); border: 1px solid rgba(204,0,0,0.3); border-radius: 20px; padding: 6px 16px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #cc0000; margin-bottom: 24px; display: inline-block; }
     .hero h1 { font-size: clamp(28px, 5vw, 48px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; max-width: 700px; }
     .hero h1 span { color: #cc0000; }
     .hero p { font-size: 17px; color: #888; max-width: 520px; line-height: 1.6; margin-bottom: 48px; }
-
-    /* CARDS */
     .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 900px; width: 100%; margin-bottom: 48px; }
     .card { background: #141414; border: 1px solid #1f1f1f; border-radius: 16px; padding: 28px; text-align: left; cursor: pointer; text-decoration: none; color: inherit; transition: all 0.2s; display: block; position: relative; overflow: hidden; }
     .card::before { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.2s; border-radius: 16px; }
@@ -45,23 +41,19 @@
     .card.blue .card-arrow { color: #1976d2; }
     .card.green .card-arrow { color: #388e3c; }
     .card-tag { position: absolute; top: 16px; right: 16px; background: #1f1f1f; border-radius: 6px; padding: 3px 8px; font-size: 11px; color: #555; }
-
-    /* FEATURES */
+    .saved-banner { background: #0a1f0a; border: 1px solid #2e7d32; border-radius: 10px; padding: 12px 16px; max-width: 900px; width: 100%; margin-bottom: 20px; display: none; align-items: center; justify-content: space-between; gap: 12px; }
+    .saved-banner.visible { display: flex; }
+    .saved-banner-left { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #4caf50; }
+    .clear-btn { background: none; border: 1px solid #2e7d32; border-radius: 6px; padding: 5px 12px; color: #4caf50; font-size: 12px; cursor: pointer; white-space: nowrap; }
+    .clear-btn:hover { background: rgba(46,125,50,0.2); }
     .features { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; max-width: 700px; }
     .feature { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; }
     .feature span { font-size: 16px; }
-
-    /* FOOTER */
     footer { background: #111; border-top: 1px solid #1f1f1f; padding: 16px 24px; text-align: center; font-size: 12px; color: #444; }
-
-    @media (max-width: 600px) {
-      .nav-links { display: none; }
-      .cards { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 600px) { .nav-links { display: none; } .cards { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
-
 <nav>
   <div class="nav-brand">
     <div class="nav-icon">🛡️</div>
@@ -72,14 +64,17 @@
     <a href="company-admin.html" class="nav-link">Company Portal</a>
     <a href="dashboard.html" class="nav-link">Dispatcher</a>
     <a href="signup.html" class="nav-link">Sign Up</a>
+    <div class="nav-saved" id="navSaved">✅ <span id="navSavedName">Logged in</span></div>
   </div>
 </nav>
-
 <div class="hero">
   <div class="hero-badge">🛡️ Emergency Response Platform</div>
   <h1>Professional Security <span>Emergency Response</span></h1>
   <p>A complete emergency response system for security companies. Real-time alerts, live dispatch, and client safety — all in one platform.</p>
-
+  <div class="saved-banner" id="savedBanner">
+    <div class="saved-banner-left">✅ <span id="savedCompanyName">Company</span> — You are logged in on this device</div>
+    <button class="clear-btn" onclick="clearSaved()">Sign Out</button>
+  </div>
   <div class="cards">
     <a href="company-admin.html" class="card red">
       <div class="card-tag">Company Admin</div>
@@ -88,7 +83,6 @@
       <p>Manage your company profile, view registered devices, registration codes and alert history.</p>
       <div class="card-arrow">Access Portal →</div>
     </a>
-
     <a href="dashboard.html" class="card blue">
       <div class="card-tag">Officers</div>
       <div class="card-icon">🗺️</div>
@@ -96,7 +90,6 @@
       <p>Live map with real-time emergency alerts, client profiles and navigation to incidents.</p>
       <div class="card-arrow">Open Dashboard →</div>
     </a>
-
     <a href="signup.html" class="card green">
       <div class="card-tag">New Companies</div>
       <div class="card-icon">🚀</div>
@@ -105,7 +98,6 @@
       <div class="card-arrow">Get Started →</div>
     </a>
   </div>
-
   <div class="features">
     <div class="feature"><span>📍</span> Real-time location tracking</div>
     <div class="feature"><span>🚨</span> Instant SOS alerts</div>
@@ -114,10 +106,22 @@
     <div class="feature"><span>🔒</span> Company branded</div>
   </div>
 </div>
-
-<footer>
-  © 2026 Secure Response Platform · All rights reserved
-</footer>
-
+<footer>© 2026 Secure Response Platform · All rights reserved</footer>
+<script>
+  function clearSaved() {
+    localStorage.removeItem('srp_officer_code');
+    localStorage.removeItem('srp_company_name');
+    document.getElementById('savedBanner').classList.remove('visible');
+    document.getElementById('navSaved').classList.remove('visible');
+  }
+  const savedCode = localStorage.getItem('srp_officer_code');
+  const savedName = localStorage.getItem('srp_company_name');
+  if (savedCode && savedName) {
+    document.getElementById('savedBanner').classList.add('visible');
+    document.getElementById('savedCompanyName').textContent = savedName;
+    document.getElementById('navSaved').classList.add('visible');
+    document.getElementById('navSavedName').textContent = savedName;
+  }
+</script>
 </body>
 </html>

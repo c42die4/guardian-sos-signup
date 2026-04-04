@@ -117,6 +117,19 @@
 </head>
 <body>
 
+<nav style="background:#111;border-bottom:1px solid #1f1f1f;padding:10px 20px;display:flex;align-items:center;justify-content:space-between">
+  <div style="display:flex;align-items:center;gap:8px">
+    <div style="width:28px;height:28px;background:#cc0000;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px">🛡️</div>
+    <span style="font-size:14px;font-weight:700;color:#fff">Secure Response</span>
+  </div>
+  <div style="display:flex;gap:6px">
+    <a href="index.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Home</a>
+    <a href="company-admin.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Company Portal</a>
+    <a href="dashboard.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Dispatcher</a>
+    <a href="signup.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Sign Up</a>
+  </div>
+</nav>
+
 <!-- LOGIN OVERLAY -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
@@ -294,7 +307,7 @@
   const db = firebase.firestore();
 
   // ── Admin password (change this!) ────────────
-  const ADMIN_PASSWORD = '$dOors1024!';
+  const ADMIN_PASSWORD = 'Guardian@Admin2024';
 
   // ── Login ────────────────────────────────────
   function adminLogin() {

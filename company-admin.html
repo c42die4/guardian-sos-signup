@@ -9,69 +9,75 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #f0f0f0; min-height: 100vh; }
+    nav { background: #111; border-bottom: 1px solid #1f1f1f; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-brand { display: flex; align-items: center; gap: 8px; }
+    .nav-icon { width: 28px; height: 28px; background: #cc0000; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .nav-brand span { font-size: 14px; font-weight: 700; color: #fff; }
+    .nav-links { display: flex; gap: 6px; align-items: center; }
+    .nav-link { background: none; border: 1px solid #2a2a2a; border-radius: 6px; padding: 5px 10px; color: #aaa; font-size: 12px; text-decoration: none; transition: all 0.2s; }
+    .nav-link:hover { border-color: #cc0000; color: #fff; }
+    .nav-link.active { border-color: #cc0000; color: #fff; background: rgba(204,0,0,0.1); }
+    .nav-saved { font-size: 11px; color: #4caf50; background: rgba(46,125,50,0.15); border: 1px solid #2e7d32; border-radius: 6px; padding: 4px 8px; display: none; }
+    .nav-saved.visible { display: block; }
+    .nav-signout { background: none; border: 1px solid #333; border-radius: 6px; padding: 4px 8px; color: #666; font-size: 11px; cursor: pointer; }
+    .nav-signout:hover { border-color: #cc0000; color: #cc0000; }
+    @media (max-width: 600px) { .nav-links { display: none; } }
 
-    /* LOGIN */
     .login-overlay { position: fixed; inset: 0; background: #0f0f0f; display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
     .login-box { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 16px; padding: 40px; width: 100%; max-width: 400px; text-align: center; }
-    .login-icon { font-size: 56px; margin-bottom: 16px; }
-    .login-box h2 { font-size: 22px; margin-bottom: 8px; }
-    .login-box p { color: #888; font-size: 14px; margin-bottom: 28px; line-height: 1.5; }
-    .login-box input { width: 100%; background: #111; border: 1px solid #333; border-radius: 8px; padding: 14px 16px; color: #f0f0f0; font-size: 16px; text-align: center; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; outline: none; }
+    .login-icon { font-size: 52px; margin-bottom: 14px; }
+    .login-box h2 { font-size: 20px; margin-bottom: 6px; }
+    .login-box p { color: #888; font-size: 13px; margin-bottom: 24px; line-height: 1.5; }
+    .login-box input { width: 100%; background: #111; border: 1px solid #333; border-radius: 8px; padding: 13px 16px; color: #f0f0f0; font-size: 16px; text-align: center; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; outline: none; }
     .login-box input:focus { border-color: var(--primary, #cc0000); }
-    .login-error { color: #ff6666; font-size: 13px; margin-top: 10px; min-height: 20px; }
+    .remember-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; cursor: pointer; }
+    .remember-row input[type=checkbox] { width: 16px; height: 16px; accent-color: #cc0000; cursor: pointer; }
+    .remember-row label { font-size: 13px; color: #888; cursor: pointer; }
+    .login-btn { width: 100%; background: #cc0000; color: #fff; border: none; border-radius: 8px; padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; }
+    .login-btn:hover { background: #aa0000; }
+    .login-btn:disabled { background: #333; cursor: not-allowed; }
+    .login-error { color: #ff6666; font-size: 13px; margin-top: 10px; min-height: 18px; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* HEADER */
-    header { background: #1a1a1a; border-bottom: 3px solid var(--primary, #cc0000); padding: 0; }
+    header { background: #1a1a1a; border-bottom: 3px solid var(--primary, #cc0000); padding: 0; display: none; }
     .header-inner { max-width: 1000px; margin: 0 auto; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
     .header-brand { display: flex; align-items: center; gap: 12px; }
-    .company-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #2a2a2a; }
     .company-logo-placeholder { width: 40px; height: 40px; border-radius: 8px; background: var(--primary, #cc0000); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
     .header-brand h1 { font-size: 17px; font-weight: 700; }
     .header-brand p { font-size: 12px; color: #888; }
-    .logout-btn { background: none; border: 1px solid #333; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; cursor: pointer; }
-    .logout-btn:hover { border-color: var(--primary, #cc0000); color: var(--primary, #cc0000); }
+    .signout-btn { background: none; border: 1px solid #333; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; cursor: pointer; }
+    .signout-btn:hover { border-color: #cc0000; color: #cc0000; }
 
-    /* MAIN */
-    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; }
-
-    /* STATS */
+    .container { max-width: 1000px; margin: 0 auto; padding: 32px 20px 60px; display: none; }
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
     .stat-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; text-align: center; }
     .stat-value { font-size: 28px; font-weight: 700; color: var(--primary, #cc0000); }
     .stat-label { font-size: 13px; color: #888; margin-top: 4px; }
-
-    /* SECTION */
     .section { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; margin-bottom: 24px; overflow: hidden; }
     .section-header { padding: 16px 20px; border-bottom: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
     .section-header h2 { font-size: 16px; font-weight: 700; }
     .section-body { padding: 20px; }
-
-    /* CODES */
     .codes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 500px) { .codes-grid { grid-template-columns: 1fr; } }
     .code-card { background: #111; border: 1px solid #2a2a2a; border-radius: 10px; padding: 16px; }
-    .code-card .code-type { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-    .code-card .code-type.officer { color: #1976d2; }
-    .code-card .code-type.client { color: #388e3c; }
-    .code-card .code-value { font-family: monospace; font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px; }
-    .code-card .code-desc { font-size: 12px; color: #666; margin-bottom: 12px; line-height: 1.4; }
+    .code-type { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+    .code-type.officer { color: #1976d2; }
+    .code-type.client { color: #388e3c; }
+    .code-value { font-family: monospace; font-size: 18px; font-weight: 700; letter-spacing: 2px; margin-bottom: 10px; }
+    .code-desc { font-size: 12px; color: #666; margin-bottom: 12px; line-height: 1.4; }
     .copy-btn { background: #1f1f1f; border: 1px solid #333; border-radius: 6px; padding: 6px 14px; color: #aaa; font-size: 13px; cursor: pointer; width: 100%; transition: all 0.2s; }
     .copy-btn:hover { border-color: var(--primary, #cc0000); color: var(--primary, #cc0000); }
-
-    /* TABLE */
+    .info-banner { background: #111; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #888; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 10px; }
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
-    th { padding: 10px 16px; text-align: left; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #555; border-bottom: 1px solid #2a2a2a; }
+    th { padding: 10px 16px; text-align: left; font-size: 12px; font-weight: 700; text-transform: uppercase; color: #555; border-bottom: 1px solid #2a2a2a; }
     td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #1f1f1f; }
     tr:last-child td { border-bottom: none; }
     .empty-state { text-align: center; color: #555; padding: 40px; font-size: 14px; }
-
     .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
     .badge-green { background: #1b5e20; color: #4caf50; }
     .badge-blue { background: #0d47a1; color: #64b5f6; }
-    .badge-grey { background: #222; color: #888; }
-
-    /* PROFILE FORM */
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 13px; color: #bbb; margin-bottom: 6px; }
     .form-group input { width: 100%; background: #111; border: 1px solid #333; border-radius: 8px; padding: 10px 14px; color: #f0f0f0; font-size: 14px; outline: none; }
@@ -81,54 +87,50 @@
     .color-input-row { display: flex; align-items: center; gap: 10px; }
     .color-input-row input[type=color] { width: 44px; height: 36px; padding: 2px; cursor: pointer; border-radius: 6px; border: 1px solid #333; background: #111; }
     .color-input-row input[type=text] { flex: 1; }
-
     .btn { border: none; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
     .btn:hover { opacity: 0.85; }
     .btn-primary { background: var(--primary, #cc0000); color: #fff; }
-    .btn-grey { background: #333; color: #aaa; }
-
-    .logo-preview { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+    .logo-preview { margin-top: 10px; display: none; align-items: center; gap: 10px; }
     .logo-preview img { width: 48px; height: 48px; object-fit: contain; border-radius: 8px; background: #2a2a2a; border: 1px solid #333; }
     .logo-preview p { font-size: 12px; color: #666; }
-
-    .info-banner { background: #111; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #888; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 10px; }
-    .info-banner .info-icon { font-size: 18px; flex-shrink: 0; }
-
-    /* ALERT HISTORY */
     .alert-status-active { color: #f44336; font-weight: 600; }
     .alert-status-resolved { color: #4caf50; }
     .alert-status-cancelled { color: #888; }
-
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
-<body><nav style="background:#111;border-bottom:1px solid #1f1f1f;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
-  <div style="display:flex;align-items:center;gap:10px">
-    <div style="width:30px;height:30px;background:#cc0000;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px">🛡️</div>
-    <span style="font-size:15px;font-weight:700;color:#fff">Secure Response</span>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-icon">🛡️</div>
+    <span>Secure Response</span>
   </div>
-  <div style="display:flex;gap:6px">
-    <a href="index.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Home</a>
-    <a href="dashboard.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Dispatcher</a>
-    <a href="signup.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Sign Up</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="dashboard.html" class="nav-link">Dispatcher</a>
+    <a href="company-admin.html" class="nav-link active">Company Portal</a>
+    <a href="signup.html" class="nav-link">Sign Up</a>
+    <span class="nav-saved" id="navSaved"></span>
+    <button class="nav-signout" id="navSignout" onclick="signOut()" style="display:none">Sign Out</button>
   </div>
 </nav>
 
-<!-- LOGIN -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
-    <div class="login-icon">🛡️</div>
+    <div class="login-icon">⚙️</div>
     <h2>Company Admin</h2>
     <p>Enter your officer code to access your company management portal.</p>
     <input type="text" id="loginCode" placeholder="OFFICER CODE" autocomplete="off" />
-    <button class="btn btn-primary" style="width:100%;padding:13px;font-size:15px" id="loginBtn" onclick="login()">Access Portal</button>
+    <div class="remember-row">
+      <input type="checkbox" id="rememberMe" checked />
+      <label for="rememberMe">Remember me on this device</label>
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="login()">Access Portal</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
-<!-- HEADER -->
-<header id="mainHeader" style="display:none">
+<header id="mainHeader">
   <div class="header-inner">
     <div class="header-brand">
       <div id="headerLogo" class="company-logo-placeholder">🛡️</div>
@@ -137,122 +139,61 @@
         <p>Admin Dashboard</p>
       </div>
     </div>
-    <button class="logout-btn" onclick="logout()">Sign Out</button>
+    <button class="signout-btn" onclick="signOut()">Sign Out</button>
   </div>
 </header>
 
-<!-- MAIN -->
-<div class="container" id="mainContent" style="display:none">
-
-  <!-- STATS -->
+<div class="container" id="mainContent">
   <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-value" id="statOfficers">—</div>
-      <div class="stat-label">Officer Devices</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statClients">—</div>
-      <div class="stat-label">Client Devices</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statActiveAlerts">—</div>
-      <div class="stat-label">Active Alerts</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statTotalAlerts">—</div>
-      <div class="stat-label">Total Alerts</div>
-    </div>
+    <div class="stat-card"><div class="stat-value" id="statOfficers">—</div><div class="stat-label">Officer Devices</div></div>
+    <div class="stat-card"><div class="stat-value" id="statClients">—</div><div class="stat-label">Client Devices</div></div>
+    <div class="stat-card"><div class="stat-value" id="statActiveAlerts">—</div><div class="stat-label">Active Alerts</div></div>
+    <div class="stat-card"><div class="stat-value" id="statTotalAlerts">—</div><div class="stat-label">Total Alerts</div></div>
   </div>
 
-  <!-- REGISTRATION CODES -->
   <div class="section">
-    <div class="section-header">
-      <h2>📋 Registration Codes</h2>
-    </div>
+    <div class="section-header"><h2>📋 Registration Codes</h2></div>
     <div class="section-body">
-      <div class="info-banner">
-        <span class="info-icon">ℹ️</span>
-        <span>Share these codes with your team. Officer codes are for your security staff. Client codes are for your clients/residents to install the app.</span>
-      </div>
+      <div class="info-banner">ℹ️ <span>Share the Officer Code with your security staff and the Client Code with your clients and residents.</span></div>
       <div class="codes-grid">
         <div class="code-card">
           <div class="code-type officer">👮 Officer Code</div>
           <div class="code-value" id="officerCode">—</div>
-          <div class="code-desc">Give this to your security officers. They will see the full officer dashboard with live alerts and navigation.</div>
-          <button class="copy-btn" onclick="copyText('officerCode')">📋 Copy Officer Code</button>
+          <div class="code-desc">For your security officers. They will see the full officer dashboard with live alerts and navigation.</div>
+          <button class="copy-btn" onclick="copyText('officerCode', this)">📋 Copy Officer Code</button>
         </div>
         <div class="code-card">
           <div class="code-type client">👤 Client Code</div>
           <div class="code-value" id="clientCode">—</div>
-          <div class="code-desc">Give this to your clients and residents. They can send SOS alerts and their profile is shared with responding officers.</div>
-          <button class="copy-btn" onclick="copyText('clientCode')">📋 Copy Client Code</button>
+          <div class="code-desc">For your clients and residents. They can send SOS alerts and their profile is shared with officers.</div>
+          <button class="copy-btn" onclick="copyText('clientCode', this)">📋 Copy Client Code</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- REGISTERED DEVICES -->
   <div class="section">
-    <div class="section-header">
-      <h2>📱 Registered Devices</h2>
-      <span id="deviceLimit" style="color:#888;font-size:13px"></span>
-    </div>
+    <div class="section-header"><h2>📱 Registered Devices</h2><span id="deviceLimit" style="color:#888;font-size:13px"></span></div>
     <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Device ID</th>
-            <th>Role</th>
-            <th>Registered</th>
-            <th>Last Seen</th>
-          </tr>
-        </thead>
-        <tbody id="devicesTable">
-          <tr><td colspan="4" class="empty-state">Loading...</td></tr>
-        </tbody>
-      </table>
+      <table><thead><tr><th>Device ID</th><th>Role</th><th>Registered</th><th>Last Seen</th></tr></thead>
+      <tbody id="devicesTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody></table>
     </div>
   </div>
 
-  <!-- ALERT HISTORY -->
   <div class="section">
-    <div class="section-header">
-      <h2>🚨 Recent Alerts</h2>
-      <span style="color:#888;font-size:13px">Last 30 days</span>
-    </div>
+    <div class="section-header"><h2>🚨 Recent Alerts</h2><span style="color:#888;font-size:13px">Last 50</span></div>
     <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Location</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody id="alertsTable">
-          <tr><td colspan="4" class="empty-state">Loading...</td></tr>
-        </tbody>
-      </table>
+      <table><thead><tr><th>Name</th><th>Status</th><th>Location</th><th>Time</th></tr></thead>
+      <tbody id="alertsTable"><tr><td colspan="4" class="empty-state">Loading...</td></tr></tbody></table>
     </div>
   </div>
 
-  <!-- COMPANY PROFILE -->
   <div class="section">
-    <div class="section-header">
-      <h2>⚙️ Company Profile</h2>
-      <span style="color:#888;font-size:12px">Contact Guardian SOS to change your plan or codes</span>
-    </div>
+    <div class="section-header"><h2>⚙️ Company Profile</h2><span style="color:#888;font-size:12px">Contact support to change plan or codes</span></div>
     <div class="section-body">
       <div class="form-row">
-        <div class="form-group">
-          <label>Company Name</label>
-          <input type="text" id="pName" placeholder="ABC Security" />
-        </div>
-        <div class="form-group">
-          <label>Emergency Control Room Number</label>
-          <input type="tel" id="pPhone" placeholder="011 123 4567" />
-        </div>
+        <div class="form-group"><label>Company Name</label><input type="text" id="pName" /></div>
+        <div class="form-group"><label>Emergency Control Room Number</label><input type="tel" id="pPhone" /></div>
       </div>
       <div class="form-row">
         <div class="form-group">
@@ -265,29 +206,19 @@
         <div class="form-group">
           <label>Logo URL</label>
           <input type="url" id="pLogo" placeholder="https://yoursite.com/logo.png" oninput="previewLogo(this.value)" />
-          <div class="logo-preview" id="logoPreview" style="display:none">
-            <img id="logoImg" src="" alt="Logo preview" />
-            <p>Logo preview</p>
-          </div>
+          <div class="logo-preview" id="logoPreview"><img id="logoImg" src="" alt="Preview" /><p>Logo preview</p></div>
         </div>
       </div>
       <div class="form-row">
-        <div class="form-group">
-          <label>Contact Name</label>
-          <input type="text" id="pContactName" placeholder="John Smith" />
-        </div>
-        <div class="form-group">
-          <label>Contact Email</label>
-          <input type="email" id="pContactEmail" placeholder="john@abcsecurity.co.za" />
-        </div>
+        <div class="form-group"><label>Contact Name</label><input type="text" id="pContactName" /></div>
+        <div class="form-group"><label>Contact Email</label><input type="email" id="pContactEmail" /></div>
       </div>
       <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()">Save Changes</button>
-        <span id="saveStatus" style="color:#4caf50;font-size:13px;align-self:center"></span>
+        <button class="btn btn-primary" id="saveBtn" onclick="saveProfile()">Save Changes</button>
+        <span id="saveStatus" style="font-size:13px;align-self:center"></span>
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
@@ -299,204 +230,134 @@
     messagingSenderId: "293568464040",
     appId: "1:293568464040:web:610554596a3803acfd2e9d"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  let currentCompanyId = null;
-  let currentCompany = null;
+  let currentCompanyId = null, currentCompany = null;
 
-  // ── Login ────────────────────────────────────
-  async function login() {
+  window.addEventListener('load', () => {
+    const saved = localStorage.getItem('srp_officer_code');
+    if (saved) { document.getElementById('loginCode').value = saved; login(true); }
+  });
+
+  async function login(auto = false) {
     const code = document.getElementById('loginCode').value.trim().toUpperCase();
     const errorEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
-
+    const remember = document.getElementById('rememberMe').checked;
     if (!code) { errorEl.textContent = 'Please enter your officer code.'; return; }
-
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Verifying...';
     errorEl.textContent = '';
-
     try {
-      const query = await db.collection('companies')
-        .where('officerCode', '==', code)
-        .limit(1)
-        .get();
-
+      const query = await db.collection('companies').where('officerCode', '==', code).limit(1).get();
       if (query.empty) {
-        errorEl.textContent = 'Invalid officer code. Please contact Guardian SOS support.';
-        btn.disabled = false;
-        btn.textContent = 'Access Portal';
+        errorEl.textContent = 'Invalid officer code.';
+        btn.disabled = false; btn.textContent = 'Access Portal';
+        if (auto) { localStorage.removeItem('srp_officer_code'); localStorage.removeItem('srp_company_name'); }
         return;
       }
-
       const doc = query.docs[0];
       const data = doc.data();
-
       if (!data.isActive) {
-        errorEl.textContent = 'Your subscription is currently suspended. Please contact Guardian SOS support.';
-        btn.disabled = false;
-        btn.textContent = 'Access Portal';
-        return;
+        errorEl.textContent = 'Subscription suspended. Please contact support.';
+        btn.disabled = false; btn.textContent = 'Access Portal'; return;
       }
-
       currentCompanyId = doc.id;
       currentCompany = data;
 
+      if (remember) {
+        localStorage.setItem('srp_officer_code', code);
+        localStorage.setItem('srp_company_name', data.name);
+      }
+
+      document.getElementById('navSaved').textContent = '✅ ' + data.name;
+      document.getElementById('navSaved').classList.add('visible');
+      document.getElementById('navSignout').style.display = 'block';
+
       applyBranding(data);
       populateProfile(data);
-
       document.getElementById('loginOverlay').style.display = 'none';
       document.getElementById('mainHeader').style.display = 'block';
       document.getElementById('mainContent').style.display = 'block';
-
       await loadStats();
       await loadDevices();
       await loadAlerts();
-
     } catch(e) {
       errorEl.textContent = 'Connection error. Please try again.';
-      btn.disabled = false;
-      btn.textContent = 'Access Portal';
-      console.error(e);
+      btn.disabled = false; btn.textContent = 'Access Portal';
     }
   }
 
-  document.getElementById('loginCode').addEventListener('keydown', e => {
-    if (e.key === 'Enter') login();
-  });
+  document.getElementById('loginCode').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
 
-  function logout() {
-    currentCompanyId = null;
-    currentCompany = null;
-    document.getElementById('loginOverlay').style.display = 'flex';
-    document.getElementById('mainHeader').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'none';
-    document.getElementById('loginCode').value = '';
-    document.getElementById('loginError').textContent = '';
+  function signOut() {
+    localStorage.removeItem('srp_officer_code');
+    localStorage.removeItem('srp_company_name');
+    location.reload();
   }
 
-  // ── Branding ─────────────────────────────────
   function applyBranding(data) {
     const color = '#' + (data.primaryColor || 'cc0000').replace('#','');
     document.documentElement.style.setProperty('--primary', color);
-
     document.getElementById('headerName').textContent = data.name || 'Company Portal';
-
-    const logoEl = document.getElementById('headerLogo');
-    if (data.logoUrl) {
-      logoEl.outerHTML = `<img id="headerLogo" class="company-logo" src="${data.logoUrl}" alt="Logo" onerror="this.outerHTML='<div id=headerLogo class=company-logo-placeholder>🛡️</div>'" />`;
-    }
-
+    document.title = (data.name || 'Company') + ' — Admin Portal';
     document.getElementById('officerCode').textContent = data.officerCode || '—';
     document.getElementById('clientCode').textContent = data.clientCode || '—';
-    document.title = (data.name || 'Company') + ' — Admin Portal';
+    const logoEl = document.getElementById('headerLogo');
+    if (data.logoUrl) {
+      logoEl.innerHTML = `<img src="${data.logoUrl}" style="width:40px;height:40px;border-radius:8px;object-fit:contain" onerror="this.parentElement.textContent='🛡️'" />`;
+    }
   }
 
-  // ── Stats ────────────────────────────────────
   async function loadStats() {
     try {
-      const devices = await db.collection('devices')
-        .where('companyId', '==', currentCompanyId)
-        .get();
-
+      const devices = await db.collection('devices').where('companyId','==',currentCompanyId).get();
       let officers = 0, clients = 0;
-      devices.docs.forEach(d => {
-        if (d.data().role === 'officer') officers++;
-        else clients++;
-      });
-
+      devices.docs.forEach(d => { if (d.data().role === 'officer') officers++; else clients++; });
       document.getElementById('statOfficers').textContent = officers;
       document.getElementById('statClients').textContent = clients;
-      document.getElementById('deviceLimit').textContent =
-        `${officers} of ${currentCompany.maxDevices || 10} officer slots used`;
-
-      const activeAlerts = await db.collection('alerts')
-        .where('companyId', '==', currentCompanyId)
-        .where('status', '==', 'ACTIVE')
-        .get();
-      document.getElementById('statActiveAlerts').textContent = activeAlerts.size;
-
-      const totalAlerts = await db.collection('alerts')
-        .where('companyId', '==', currentCompanyId)
-        .get();
-      document.getElementById('statTotalAlerts').textContent = totalAlerts.size;
-
+      document.getElementById('deviceLimit').textContent = `${officers} of ${currentCompany.maxDevices||10} officer slots used`;
+      const active = await db.collection('alerts').where('companyId','==',currentCompanyId).where('status','==','ACTIVE').get();
+      document.getElementById('statActiveAlerts').textContent = active.size;
+      const total = await db.collection('alerts').where('companyId','==',currentCompanyId).get();
+      document.getElementById('statTotalAlerts').textContent = total.size;
     } catch(e) { console.error(e); }
   }
 
-  // ── Devices ──────────────────────────────────
   async function loadDevices() {
     const tbody = document.getElementById('devicesTable');
     try {
-      const snap = await db.collection('devices')
-        .where('companyId', '==', currentCompanyId)
-        .get();
-
-      if (snap.empty) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No devices registered yet.</td></tr>';
-        return;
-      }
-
+      const snap = await db.collection('devices').where('companyId','==',currentCompanyId).get();
+      if (snap.empty) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No devices registered yet.</td></tr>'; return; }
       tbody.innerHTML = snap.docs.map(doc => {
         const d = doc.data();
         const role = d.role || 'client';
-        const registered = d.registeredAt?.toDate ? formatDate(d.registeredAt.toDate()) : '—';
-        const lastSeen = d.lastSeen?.toDate ? timeAgo(d.lastSeen.toDate()) : '—';
-        return `<tr>
-          <td style="font-family:monospace;font-size:12px;color:#666">${doc.id.substring(0,20)}...</td>
-          <td><span class="badge ${role === 'officer' ? 'badge-blue' : 'badge-green'}">${role === 'officer' ? '👮 Officer' : '👤 Client'}</span></td>
-          <td style="font-size:13px;color:#888">${registered}</td>
-          <td style="font-size:13px;color:#888">${lastSeen}</td>
-        </tr>`;
+        const reg = d.registeredAt?.toDate ? fmtDate(d.registeredAt.toDate()) : '—';
+        const seen = d.lastSeen?.toDate ? timeAgo(d.lastSeen.toDate()) : '—';
+        return `<tr><td style="font-family:monospace;font-size:12px;color:#666">${doc.id.substring(0,20)}...</td><td><span class="badge ${role==='officer'?'badge-blue':'badge-green'}">${role==='officer'?'👮 Officer':'👤 Client'}</span></td><td style="font-size:13px;color:#888">${reg}</td><td style="font-size:13px;color:#888">${seen}</td></tr>`;
       }).join('');
-    } catch(e) {
-      tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Error loading devices.</td></tr>`;
-    }
+    } catch(e) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Error loading devices.</td></tr>'; }
   }
 
-  // ── Alerts ───────────────────────────────────
   async function loadAlerts() {
     const tbody = document.getElementById('alertsTable');
     try {
-      const snap = await db.collection('alerts')
-        .where('companyId', '==', currentCompanyId)
-        .get();
-
-      const sorted = snap.docs.sort((a, b) => {
-        const ta = a.data().timestamp?.toDate?.() || 0;
-        const tb = b.data().timestamp?.toDate?.() || 0;
-        return tb - ta;
-      }).slice(0, 50);
-
-      if (sorted.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No alerts yet.</td></tr>';
-        return;
-      }
-
+      const snap = await db.collection('alerts').where('companyId','==',currentCompanyId).get();
+      const sorted = snap.docs.sort((a,b) => { const ta=a.data().timestamp?.toDate?.()||0, tb=b.data().timestamp?.toDate?.()||0; return tb-ta; }).slice(0,50);
+      if (sorted.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">No alerts yet.</td></tr>'; return; }
       tbody.innerHTML = sorted.map(doc => {
         const d = doc.data();
-        const statusClass = d.status === 'ACTIVE' ? 'alert-status-active' :
-                           d.status === 'RESOLVED' ? 'alert-status-resolved' : 'alert-status-cancelled';
-        const time = d.timestamp?.toDate ? timeAgo(d.timestamp.toDate()) : '—';
-        return `<tr>
-          <td style="font-weight:600">${escHtml(d.userName || 'Unknown')}</td>
-          <td><span class="${statusClass}">${d.status || '—'}</span></td>
-          <td style="font-size:12px;color:#666">${d.lat?.toFixed(4) || '?'}, ${d.lng?.toFixed(4) || '?'}</td>
-          <td style="font-size:13px;color:#888">${time}</td>
-        </tr>`;
+        const cls = d.status==='ACTIVE'?'alert-status-active':d.status==='RESOLVED'?'alert-status-resolved':'alert-status-cancelled';
+        return `<tr><td style="font-weight:600">${escHtml(d.userName||'Unknown')}</td><td><span class="${cls}">${d.status||'—'}</span></td><td style="font-size:12px;color:#666">${d.lat?.toFixed(4)||'?'}, ${d.lng?.toFixed(4)||'?'}</td><td style="font-size:13px;color:#888">${d.timestamp?.toDate?timeAgo(d.timestamp.toDate()):'—'}</td></tr>`;
       }).join('');
-    } catch(e) {
-      tbody.innerHTML = `<tr><td colspan="4" class="empty-state">Error loading alerts.</td></tr>`;
-    }
+    } catch(e) { tbody.innerHTML = '<tr><td colspan="4" class="empty-state">Error loading alerts.</td></tr>'; }
   }
 
-  // ── Profile ──────────────────────────────────
   function populateProfile(data) {
     document.getElementById('pName').value = data.name || '';
     document.getElementById('pPhone').value = data.emergencyPhone || '';
-    const color = '#' + (data.primaryColor || 'cc0000').replace('#','');
+    const color = '#' + (data.primaryColor||'cc0000').replace('#','');
     document.getElementById('pColor').value = color;
     document.getElementById('pColorPicker').value = color;
     document.getElementById('pLogo').value = data.logoUrl || '';
@@ -506,12 +367,9 @@
   }
 
   async function saveProfile() {
-    const btn = document.getElementById('saveProfileBtn');
+    const btn = document.getElementById('saveBtn');
     const status = document.getElementById('saveStatus');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span>Saving...';
-    status.textContent = '';
-
+    btn.disabled = true; btn.textContent = 'Saving...'; status.textContent = '';
     try {
       const color = document.getElementById('pColor').value.trim().replace('#','');
       const updates = {
@@ -523,76 +381,31 @@
         contactEmail: document.getElementById('pContactEmail').value.trim(),
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
-
       await db.collection('companies').doc(currentCompanyId).update(updates);
-      currentCompany = { ...currentCompany, ...updates };
+      currentCompany = {...currentCompany, ...updates};
       applyBranding(currentCompany);
-
-      status.textContent = '✅ Saved successfully!';
+      localStorage.setItem('srp_company_name', updates.name);
+      document.getElementById('navSaved').textContent = '✅ ' + updates.name;
+      status.textContent = '✅ Saved!'; status.style.color = '#4caf50';
       setTimeout(() => status.textContent = '', 3000);
-    } catch(e) {
-      status.textContent = '❌ Error saving. Try again.';
-      status.style.color = '#ff6666';
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Save Changes';
-    }
+    } catch(e) { status.textContent = '❌ Error saving.'; status.style.color = '#ff6666'; }
+    finally { btn.disabled = false; btn.textContent = 'Save Changes'; }
   }
 
-  // ── Helpers ──────────────────────────────────
-  function syncColor(val) {
-    document.getElementById('pColor').value = val;
-    document.documentElement.style.setProperty('--primary', val);
-  }
+  function syncColor(val) { document.getElementById('pColor').value = val; document.documentElement.style.setProperty('--primary', val); }
+  function syncPicker(val) { if (/^#[0-9A-Fa-f]{6}$/.test(val)) { document.getElementById('pColorPicker').value = val; document.documentElement.style.setProperty('--primary', val); } }
+  function previewLogo(url) { const p = document.getElementById('logoPreview'), i = document.getElementById('logoImg'); if (url) { i.src = url; p.style.display = 'flex'; } else p.style.display = 'none'; }
 
-  function syncPicker(val) {
-    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-      document.getElementById('pColorPicker').value = val;
-      document.documentElement.style.setProperty('--primary', val);
-    }
-  }
-
-  function previewLogo(url) {
-    const preview = document.getElementById('logoPreview');
-    const img = document.getElementById('logoImg');
-    if (url) {
-      img.src = url;
-      preview.style.display = 'flex';
-    } else {
-      preview.style.display = 'none';
-    }
-  }
-
-  function copyText(elementId) {
-    const text = document.getElementById(elementId).textContent;
-    navigator.clipboard.writeText(text).then(() => {
-      const btns = document.querySelectorAll('.copy-btn');
-      btns.forEach(btn => {
-        if (btn.getAttribute('onclick')?.includes(elementId)) {
-          btn.textContent = '✅ Copied!';
-          setTimeout(() => btn.textContent = elementId === 'officerCode' ? '📋 Copy Officer Code' : '📋 Copy Client Code', 2000);
-        }
-      });
+  function copyText(id, btn) {
+    navigator.clipboard.writeText(document.getElementById(id).textContent).then(() => {
+      const orig = btn.textContent; btn.textContent = '✅ Copied!';
+      setTimeout(() => btn.textContent = orig, 2000);
     });
   }
 
-  function timeAgo(date) {
-    const diff = Math.floor((Date.now() - date) / 1000);
-    if (diff < 60) return diff + 's ago';
-    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
-    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
-    return Math.floor(diff / 86400) + 'd ago';
-  }
-
-  function formatDate(date) {
-    return date.toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: 'numeric' });
-  }
-
-  function escHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
+  function timeAgo(date) { const d=Math.floor((Date.now()-date)/1000); if(d<60) return d+'s ago'; if(d<3600) return Math.floor(d/60)+'m ago'; if(d<86400) return Math.floor(d/3600)+'h ago'; return Math.floor(d/86400)+'d ago'; }
+  function fmtDate(date) { return date.toLocaleDateString('en-ZA',{day:'2-digit',month:'short',year:'numeric'}); }
+  function escHtml(str) { if(!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
-
 </body>
 </html>
