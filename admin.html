@@ -10,7 +10,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #f0f0f0; min-height: 100vh; }
 
-    /* LOGIN */
     .login-overlay { position: fixed; inset: 0; background: #0f0f0f; display: flex; align-items: center; justify-content: center; z-index: 9999; }
     .login-box { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 16px; padding: 40px; width: 100%; max-width: 380px; text-align: center; }
     .login-box .icon { font-size: 48px; margin-bottom: 16px; }
@@ -20,28 +19,23 @@
     .login-box input:focus { border-color: #cc0000; }
     .login-error { color: #ff6666; font-size: 13px; margin-top: 8px; min-height: 18px; }
 
-    /* HEADER */
     header { background: #1a1a1a; border-bottom: 2px solid #cc0000; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
     header h1 { font-size: 18px; font-weight: 700; }
     header p { font-size: 12px; color: #888; }
     .logout-btn { background: none; border: 1px solid #333; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; cursor: pointer; }
     .logout-btn:hover { border-color: #cc0000; color: #cc0000; }
 
-    /* MAIN LAYOUT */
-    .container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
 
-    /* STATS ROW */
     .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
     .stat-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; text-align: center; }
     .stat-card .stat-value { font-size: 32px; font-weight: 700; color: #cc0000; }
     .stat-card .stat-label { font-size: 13px; color: #888; margin-top: 4px; }
 
-    /* SECTION */
     .section { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; margin-bottom: 24px; overflow: hidden; }
     .section-header { padding: 16px 20px; border-bottom: 1px solid #2a2a2a; display: flex; align-items: center; justify-content: space-between; }
     .section-header h2 { font-size: 16px; font-weight: 700; }
 
-    /* BUTTONS */
     .btn { border: none; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
     .btn:hover { opacity: 0.85; }
     .btn-red { background: #cc0000; color: #fff; }
@@ -49,9 +43,9 @@
     .btn-blue { background: #1565c0; color: #fff; }
     .btn-orange { background: #e65100; color: #fff; }
     .btn-grey { background: #333; color: #aaa; }
+    .btn-purple { background: #6a1b9a; color: #fff; }
     .btn-sm { padding: 6px 12px; font-size: 12px; }
 
-    /* TABLE */
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; }
     th { padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #666; border-bottom: 1px solid #2a2a2a; }
@@ -66,7 +60,6 @@
 
     .color-dot { width: 16px; height: 16px; border-radius: 50%; display: inline-block; border: 1px solid #333; vertical-align: middle; margin-right: 6px; }
 
-    /* MODAL */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
     .modal-overlay.open { display: flex; }
     .modal { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 16px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
@@ -76,7 +69,6 @@
     .modal-body { padding: 24px; }
     .modal-footer { padding: 16px 24px; border-top: 1px solid #2a2a2a; display: flex; justify-content: flex-end; gap: 10px; }
 
-    /* FORM */
     .form-group { margin-bottom: 16px; }
     .form-group label { display: block; font-size: 13px; color: #bbb; margin-bottom: 6px; font-weight: 500; }
     .form-group input, .form-group select { width: 100%; background: #111; border: 1px solid #333; border-radius: 8px; padding: 10px 14px; color: #f0f0f0; font-size: 14px; outline: none; }
@@ -91,46 +83,28 @@
     .copy-btn { background: none; border: 1px solid #333; border-radius: 4px; padding: 3px 8px; color: #888; font-size: 11px; cursor: pointer; }
     .copy-btn:hover { border-color: #4caf50; color: #4caf50; }
 
-    .color-preview { width: 36px; height: 36px; border-radius: 6px; border: 1px solid #333; flex-shrink: 0; }
     .color-input-row { display: flex; align-items: center; gap: 10px; }
     .color-input-row input[type=color] { width: 44px; height: 36px; padding: 2px; cursor: pointer; border-radius: 6px; }
     .color-input-row input[type=text] { flex: 1; }
 
-    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #1f1f1f; }
-    .toggle-row:last-child { border-bottom: none; }
-    .toggle-label { font-size: 14px; }
-    .toggle-sub { font-size: 12px; color: #666; margin-top: 2px; }
-
-    .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; cursor: pointer; inset: 0; background: #333; border-radius: 24px; transition: 0.3s; }
-    .slider:before { position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
-    input:checked + .slider { background: #cc0000; }
-    input:checked + .slider:before { transform: translateX(20px); }
-
     .info-box { background: #111; border: 1px solid #333; border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #888; margin-top: 8px; }
-
     .empty-row td { text-align: center; color: #555; padding: 40px; }
-
     .loading { text-align: center; padding: 40px; color: #555; }
+
+    /* Company switcher */
+    .switcher-banner { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 12px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .switcher-banner label { font-size: 13px; color: #888; white-space: nowrap; }
+    .company-select { flex: 1; min-width: 200px; background: #111; border: 1px solid #333; border-radius: 8px; padding: 8px 12px; color: #f0f0f0; font-size: 14px; outline: none; cursor: pointer; }
+    .company-select:focus { border-color: #cc0000; }
+    .view-btn { background: #1565c0; color: #fff; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .view-btn:hover { background: #0d47a1; }
+    .view-btn.portal { background: #6a1b9a; }
+    .view-btn.portal:hover { background: #4a148c; }
   </style>
 </head>
 <body>
 
-<nav style="background:#111;border-bottom:1px solid #1f1f1f;padding:10px 20px;display:flex;align-items:center;justify-content:space-between">
-  <div style="display:flex;align-items:center;gap:8px">
-    <div style="width:28px;height:28px;background:#cc0000;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px">🛡️</div>
-    <span style="font-size:14px;font-weight:700;color:#fff">Secure Response</span>
-  </div>
-  <div style="display:flex;gap:6px">
-    <a href="index.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Home</a>
-    <a href="company-admin.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Company Portal</a>
-    <a href="dashboard.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Dispatcher</a>
-    <a href="signup.html" style="background:none;border:1px solid #2a2a2a;border-radius:6px;padding:5px 10px;color:#aaa;font-size:12px;text-decoration:none">Sign Up</a>
-  </div>
-</nav>
-
-<!-- LOGIN OVERLAY -->
+<!-- LOGIN -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <div class="icon">🔐</div>
@@ -154,24 +128,22 @@
 <!-- MAIN -->
 <div class="container" id="mainContent" style="display:none">
 
+  <!-- COMPANY SWITCHER -->
+  <div class="switcher-banner">
+    <label>🔀 Switch to company:</label>
+    <select class="company-select" id="companySwitcher">
+      <option value="">— Select a company —</option>
+    </select>
+    <button class="view-btn" onclick="openDispatcher()">🗺 Open Dispatcher</button>
+    <button class="view-btn portal" onclick="openPortal()">⚙️ Open Portal</button>
+  </div>
+
   <!-- STATS -->
   <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-value" id="statTotal">—</div>
-      <div class="stat-label">Total Companies</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statActive">—</div>
-      <div class="stat-label">Active Subscriptions</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statDevices">—</div>
-      <div class="stat-label">Registered Devices</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="statAlerts">—</div>
-      <div class="stat-label">Alerts Today</div>
-    </div>
+    <div class="stat-card"><div class="stat-value" id="statTotal">—</div><div class="stat-label">Total Companies</div></div>
+    <div class="stat-card"><div class="stat-value" id="statActive">—</div><div class="stat-label">Active Subscriptions</div></div>
+    <div class="stat-card"><div class="stat-value" id="statDevices">—</div><div class="stat-label">Registered Devices</div></div>
+    <div class="stat-card"><div class="stat-value" id="statAlerts">—</div><div class="stat-label">Alerts Today</div></div>
   </div>
 
   <!-- COMPANIES TABLE -->
@@ -208,7 +180,6 @@
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
-
       <div class="section-label-form">Company Details</div>
       <div class="form-group">
         <label>Company Name *</label>
@@ -231,7 +202,6 @@
         <label>Emergency Control Room Number</label>
         <input type="tel" id="fPhone" placeholder="011 123 4567" />
       </div>
-
       <div class="section-label-form">Contact Person</div>
       <div class="form-row">
         <div class="form-group">
@@ -247,7 +217,6 @@
         <label>Phone</label>
         <input type="tel" id="fContactPhone" placeholder="082 123 4567" />
       </div>
-
       <div class="section-label-form">Subscription</div>
       <div class="form-row">
         <div class="form-group">
@@ -262,19 +231,18 @@
           </select>
         </div>
       </div>
-
       <div class="section-label-form" id="codesSection">Registration Codes</div>
       <div id="codesArea">
         <div class="form-group">
           <label>Officer Code</label>
-          <div class="code-box" id="fOfficerCode">
+          <div class="code-box">
             <span id="officerCodeText">—</span>
             <button class="copy-btn" onclick="copyCode('officerCodeText')">Copy</button>
           </div>
         </div>
         <div class="form-group">
           <label>Client Code</label>
-          <div class="code-box" id="fClientCode">
+          <div class="code-box">
             <span id="clientCodeText">—</span>
             <button class="copy-btn" onclick="copyCode('clientCodeText')">Copy</button>
           </div>
@@ -283,7 +251,6 @@
           Share the <strong>Officer Code</strong> with your security officers and the <strong>Client Code</strong> with their clients/residents.
         </div>
       </div>
-
     </div>
     <div class="modal-footer">
       <button class="btn btn-grey" onclick="closeModal()">Cancel</button>
@@ -293,7 +260,6 @@
 </div>
 
 <script>
-  // ── Firebase ─────────────────────────────────
   const firebaseConfig = {
     apiKey: "AIzaSyA1yIuvCuplOsaPgRXSCcjOz2z3ful5AeM",
     authDomain: "guardian-os-80042.firebaseapp.com",
@@ -302,14 +268,14 @@
     messagingSenderId: "293568464040",
     appId: "1:293568464040:web:610554596a3803acfd2e9d"
   };
-
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // ── Admin password (change this!) ────────────
   const ADMIN_PASSWORD = 'Guardian@Admin2024';
 
-  // ── Login ────────────────────────────────────
+  // Store all companies data for switcher
+  let allCompanies = [];
+
   function adminLogin() {
     const pwd = document.getElementById('adminPassword').value;
     if (pwd === ADMIN_PASSWORD) {
@@ -331,7 +297,6 @@
     document.getElementById('adminPassword').value = '';
   }
 
-  // ── Load dashboard ───────────────────────────
   async function loadDashboard() {
     await loadCompanies();
     await loadStats();
@@ -343,34 +308,35 @@
       const active = companies.docs.filter(d => d.data().isActive).length;
       document.getElementById('statTotal').textContent = companies.size;
       document.getElementById('statActive').textContent = active;
-
       const devices = await db.collection('devices').get();
       document.getElementById('statDevices').textContent = devices.size;
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      const today = new Date(); today.setHours(0,0,0,0);
       const alerts = await db.collection('alerts')
-        .where('timestamp', '>=', firebase.firestore.Timestamp.fromDate(today))
-        .get();
+        .where('timestamp', '>=', firebase.firestore.Timestamp.fromDate(today)).get();
       document.getElementById('statAlerts').textContent = alerts.size;
-    } catch(e) {
-      console.error(e);
-    }
+    } catch(e) { console.error(e); }
   }
 
   async function loadCompanies() {
     const tbody = document.getElementById('companiesTable');
+    const switcher = document.getElementById('companySwitcher');
     tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading...</td></tr>';
 
     try {
       const snapshot = await db.collection('companies').orderBy('name').get();
 
       if (snapshot.empty) {
-        tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No companies yet. Click "+ New Company" to add one.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No companies yet.</td></tr>';
         return;
       }
 
-      // Get device counts per company
+      // Store for switcher
+      allCompanies = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+
+      // Populate switcher dropdown
+      switcher.innerHTML = '<option value="">— Select a company —</option>' +
+        allCompanies.map(c => `<option value="${c.officerCode || ''}" data-name="${escHtml(c.name)}">${escHtml(c.name)}</option>`).join('');
+
       const devicesSnap = await db.collection('devices').get();
       const deviceCounts = {};
       devicesSnap.docs.forEach(d => {
@@ -387,7 +353,7 @@
         return `<tr>
           <td>
             <div style="display:flex;align-items:center;gap:8px">
-              <span class="color-dot" style="background:${color}"></span>
+              ${d.logoUrl ? `<img src="${d.logoUrl}" style="width:28px;height:28px;border-radius:6px;object-fit:contain" onerror="this.style.display='none'" />` : `<span class="color-dot" style="background:${color}"></span>`}
               <div>
                 <div style="font-weight:600">${escHtml(d.name || '—')}</div>
                 <div style="font-size:11px;color:#555">${doc.id}</div>
@@ -410,35 +376,57 @@
           <td>
             <div style="display:flex;gap:6px;flex-wrap:wrap">
               <button class="btn btn-blue btn-sm" onclick="editCompany('${doc.id}')">Edit</button>
-              <button class="btn btn-sm ${isActive ? 'badge-red' : 'btn-green'}" 
+              <button class="btn btn-sm" 
                 style="background:${isActive ? '#3e0000' : '#1b5e20'};color:${isActive ? '#ff6666' : '#4caf50'};border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer"
                 onclick="toggleActive('${doc.id}', ${isActive})">
                 ${isActive ? 'Suspend' : 'Activate'}
               </button>
-              <button class="btn btn-grey btn-sm" onclick="viewCodes('${doc.id}', '${escHtml(d.officerCode||'')}', '${escHtml(d.clientCode||'')}')">Codes</button>
+              <button class="btn btn-sm" style="background:#1565c0;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer"
+                onclick="quickDispatcher('${escHtml(d.officerCode||'')}')">🗺 Dispatch</button>
+              <button class="btn btn-sm" style="background:#6a1b9a;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer"
+                onclick="quickPortal('${escHtml(d.officerCode||'')}')">⚙️ Portal</button>
             </div>
           </td>
         </tr>`;
       }).join('');
 
     } catch(e) {
-      tbody.innerHTML = `<tr><td colspan="5" class="empty-row">Error loading companies: ${e.message}</td></tr>`;
-      console.error(e);
+      tbody.innerHTML = `<tr><td colspan="5" class="empty-row">Error: ${e.message}</td></tr>`;
     }
+  }
+
+  // ── Company switcher ─────────────────────────
+  function openDispatcher() {
+    const code = document.getElementById('companySwitcher').value;
+    if (!code) { alert('Please select a company first.'); return; }
+    quickDispatcher(code);
+  }
+
+  function openPortal() {
+    const code = document.getElementById('companySwitcher').value;
+    if (!code) { alert('Please select a company first.'); return; }
+    quickPortal(code);
+  }
+
+  function quickDispatcher(code) {
+    if (!code) return;
+    // Store code in localStorage so dashboard auto-logs in
+    localStorage.setItem('srp_officer_code', code);
+    window.open('dashboard.html', '_blank');
+  }
+
+  function quickPortal(code) {
+    if (!code) return;
+    localStorage.setItem('srp_officer_code', code);
+    window.open('company-admin.html', '_blank');
   }
 
   // ── Toggle active ────────────────────────────
   async function toggleActive(id, currentState) {
-    const action = currentState ? 'suspend' : 'activate';
-    if (!confirm(`Are you sure you want to ${action} this company?`)) return;
+    if (!confirm(`Are you sure you want to ${currentState ? 'suspend' : 'activate'} this company?`)) return;
     await db.collection('companies').doc(id).update({ isActive: !currentState });
     await loadCompanies();
     await loadStats();
-  }
-
-  // ── View codes ───────────────────────────────
-  function viewCodes(id, officerCode, clientCode) {
-    alert(`Company ID: ${id}\n\nOfficer Code: ${officerCode}\nClient Code: ${clientCode}`);
   }
 
   // ── Modal ────────────────────────────────────
@@ -457,16 +445,8 @@
     document.getElementById('fContactPhone').value = '';
     document.getElementById('fMaxDevices').value = '10';
     document.getElementById('fIsActive').value = 'true';
-
-    // Generate codes for new company
-    const tempName = 'NEW';
-    const officerCode = generateCode(tempName, 'OFF');
-    const clientCode = generateCode(tempName, 'CLI');
-    document.getElementById('officerCodeText').textContent = officerCode;
-    document.getElementById('clientCodeText').textContent = clientCode;
-    document.getElementById('codesSection').style.display = 'flex';
-    document.getElementById('codesArea').style.display = 'block';
-
+    document.getElementById('officerCodeText').textContent = generateCode('NEW', 'OFF');
+    document.getElementById('clientCodeText').textContent = generateCode('NEW', 'CLI');
     document.getElementById('saveBtn').textContent = 'Create Company';
     document.getElementById('companyModal').classList.add('open');
   }
@@ -475,11 +455,9 @@
     editingId = id;
     document.getElementById('modalTitle').textContent = 'Edit Company';
     document.getElementById('saveBtn').textContent = 'Save Changes';
-
     try {
       const doc = await db.collection('companies').doc(id).get();
       const d = doc.data();
-
       document.getElementById('fName').value = d.name || '';
       const color = '#' + (d.primaryColor || 'cc0000').replace('#','');
       document.getElementById('fColor').value = color;
@@ -493,11 +471,8 @@
       document.getElementById('fIsActive').value = d.isActive ? 'true' : 'false';
       document.getElementById('officerCodeText').textContent = d.officerCode || '—';
       document.getElementById('clientCodeText').textContent = d.clientCode || '—';
-
       document.getElementById('companyModal').classList.add('open');
-    } catch(e) {
-      alert('Error loading company: ' + e.message);
-    }
+    } catch(e) { alert('Error loading company: ' + e.message); }
   }
 
   function closeModal() {
@@ -508,15 +483,12 @@
   async function saveCompany() {
     const name = document.getElementById('fName').value.trim();
     if (!name) { alert('Company name is required.'); return; }
-
     const btn = document.getElementById('saveBtn');
-    btn.disabled = true;
-    btn.textContent = 'Saving...';
-
+    btn.disabled = true; btn.textContent = 'Saving...';
     try {
       const color = document.getElementById('fColor').value.trim().replace('#','');
       const data = {
-        name: name,
+        name,
         primaryColor: color,
         logoUrl: document.getElementById('fLogo').value.trim(),
         emergencyPhone: document.getElementById('fPhone').value.trim(),
@@ -527,27 +499,20 @@
         isActive: document.getElementById('fIsActive').value === 'true',
         updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
       };
-
       if (editingId) {
         await db.collection('companies').doc(editingId).update(data);
       } else {
         const officerCode = document.getElementById('officerCodeText').textContent;
         const clientCode = document.getElementById('clientCodeText').textContent;
         const companyId = name.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').substring(0,30) + '_' + Date.now();
-        data.officerCode = officerCode.startsWith(name.substring(0,4).toUpperCase())
-          ? officerCode
-          : generateCode(name, 'OFF');
-        data.clientCode = clientCode.startsWith(name.substring(0,4).toUpperCase())
-          ? clientCode
-          : generateCode(name, 'CLI');
+        data.officerCode = officerCode;
+        data.clientCode = clientCode;
         data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
         await db.collection('companies').doc(companyId).set(data);
       }
-
       closeModal();
       await loadCompanies();
       await loadStats();
-
     } catch(e) {
       alert('Error saving: ' + e.message);
     } finally {
@@ -556,27 +521,19 @@
     }
   }
 
-  // ── Helpers ──────────────────────────────────
   function generateCode(name, type) {
     const prefix = name.replace(/[^a-zA-Z]/g,'').substring(0,4).toUpperCase() || 'COMP';
     const suffix = Math.floor(1000 + Math.random() * 9000);
     return `${prefix}-${type}-${suffix}`;
   }
 
-  function syncModalColor(val) {
-    document.getElementById('fColor').value = val;
-  }
-
-  function syncModalPicker(val) {
-    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-      document.getElementById('fColorPicker').value = val;
-    }
-  }
+  function syncModalColor(val) { document.getElementById('fColor').value = val; }
+  function syncModalPicker(val) { if (/^#[0-9A-Fa-f]{6}$/.test(val)) document.getElementById('fColorPicker').value = val; }
 
   function copyCode(elementId) {
     const text = document.getElementById(elementId).textContent;
     navigator.clipboard.writeText(text).then(() => {
-      const btn = document.querySelector(`#${elementId}`).nextElementSibling;
+      const btn = document.getElementById(elementId).nextElementSibling;
       btn.textContent = 'Copied!';
       setTimeout(() => btn.textContent = 'Copy', 2000);
     });
@@ -587,6 +544,5 @@
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 </script>
-
 </body>
 </html>
