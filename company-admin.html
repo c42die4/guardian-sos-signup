@@ -101,15 +101,14 @@
 <body>
 
 <nav>
-  <div class="nav-brand">
-    <div class="nav-icon">🛡️</div>
-    <span>Secure Response</span>
+  <div class="nav-brand" id="navBrand">
+    <div class="nav-icon" id="navIcon">🛡️</div>
+    <span id="navBrandName">Portal</span>
   </div>
   <div class="nav-links">
     <a href="index.html" class="nav-link">Home</a>
     <a href="dashboard.html" class="nav-link">Dispatcher</a>
     <a href="company-admin.html" class="nav-link active">Company Portal</a>
-    <a href="signup.html" class="nav-link">Sign Up</a>
     <span class="nav-saved" id="navSaved"></span>
     <button class="nav-signout" id="navSignout" onclick="signOut()" style="display:none">Sign Out</button>
   </div>
@@ -304,6 +303,14 @@
     document.title = (data.name || 'Company') + ' — Admin Portal';
     document.getElementById('officerCode').textContent = data.officerCode || '—';
     document.getElementById('clientCode').textContent = data.clientCode || '—';
+    // Update nav brand
+    document.getElementById('navBrandName').textContent = data.name || 'Portal';
+    if (data.logoUrl) {
+      document.getElementById('navIcon').innerHTML = `<img src="${data.logoUrl}" style="width:28px;height:28px;border-radius:6px;object-fit:contain" onerror="this.parentElement.textContent='🛡️'" />`;
+      document.getElementById('navIcon').style.background = 'transparent';
+    } else {
+      document.getElementById('navIcon').style.background = color;
+    }
     const logoEl = document.getElementById('headerLogo');
     if (data.logoUrl) {
       logoEl.innerHTML = `<img src="${data.logoUrl}" style="width:40px;height:40px;border-radius:8px;object-fit:contain" onerror="this.parentElement.textContent='🛡️'" />`;

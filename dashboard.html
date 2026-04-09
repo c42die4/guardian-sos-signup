@@ -13,14 +13,12 @@
     body { font-family: 'Segoe UI', sans-serif; background: #0f0f0f; color: #f0f0f0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     nav { background: #111; border-bottom: 1px solid #1f1f1f; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
     .nav-brand { display: flex; align-items: center; gap: 8px; }
-    .nav-icon { width: 28px; height: 28px; background: #cc0000; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+    .nav-logo { width: 28px; height: 28px; border-radius: 6px; object-fit: contain; }
     .nav-brand span { font-size: 14px; font-weight: 700; color: #fff; }
     .nav-links { display: flex; gap: 6px; align-items: center; }
     .nav-link { background: none; border: 1px solid #2a2a2a; border-radius: 6px; padding: 5px 10px; color: #aaa; font-size: 12px; text-decoration: none; transition: all 0.2s; }
     .nav-link:hover { border-color: #cc0000; color: #fff; }
     .nav-link.active { border-color: #cc0000; color: #fff; background: rgba(204,0,0,0.1); }
-    .nav-saved { font-size: 11px; color: #4caf50; background: rgba(46,125,50,0.15); border: 1px solid #2e7d32; border-radius: 6px; padding: 4px 8px; display: none; }
-    .nav-saved.visible { display: block; }
     .nav-signout { background: none; border: 1px solid #333; border-radius: 6px; padding: 4px 8px; color: #666; font-size: 11px; cursor: pointer; }
     .nav-signout:hover { border-color: #cc0000; color: #cc0000; }
     @media (max-width: 600px) { .nav-links { display: none; } }
@@ -106,18 +104,15 @@
 </head>
 <body>
 
-<nav>
+<nav id="mainNav" style="display:none">
   <div class="nav-brand">
-    <div class="nav-icon">🛡️</div>
-    <span>Secure Response</span>
+    <div id="navLogoWrap"></div>
+    <span id="navCompanyName">Dispatcher</span>
   </div>
   <div class="nav-links">
-    <a href="index.html" class="nav-link">Home</a>
-    <a href="company-admin.html" class="nav-link">Company Portal</a>
     <a href="dashboard.html" class="nav-link active">Dispatcher</a>
-    <a href="signup.html" class="nav-link">Sign Up</a>
-    <span class="nav-saved" id="navSaved"></span>
-    <button class="nav-signout" id="navSignout" onclick="signOut()" style="display:none">Sign Out</button>
+    <a href="company-admin.html" class="nav-link">Company Portal</a>
+    <button class="nav-signout" onclick="signOut()">Sign Out</button>
   </div>
 </nav>
 
@@ -198,41 +193,33 @@
 
   let alerts = {}, markers = {}, selectedId = null, currentFilter = 'ACTIVE';
   let audioEnabled = true, lastAlertCount = 0, unsubscribe = null;
-  let currentCompanyId = null, currentCompanyName = null;
+  let currentCompanyId = null;
 
-  // ── Clock ──────────────────────────────────
   setInterval(() => {
     document.getElementById('clock').textContent =
       new Date().toLocaleTimeString('en-ZA', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   }, 1000);
 
-  // ── Auto-login from localStorage ──────────
   window.addEventListener('load', () => {
     const saved = localStorage.getItem('srp_officer_code');
-    if (saved) {
-      document.getElementById('loginCode').value = saved;
-      login(true);
-    }
+    if (saved) { document.getElementById('loginCode').value = saved; login(true); }
   });
 
-  // ── Login ──────────────────────────────────
   async function login(auto = false) {
     const code = document.getElementById('loginCode').value.trim().toUpperCase();
     const errorEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
     const remember = document.getElementById('rememberMe').checked;
-
     if (!code) { errorEl.textContent = 'Please enter your access code.'; return; }
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span>Verifying...';
     errorEl.textContent = '';
-
     try {
       const query = await db.collection('companies').where('officerCode', '==', code).limit(1).get();
       if (query.empty) {
         errorEl.textContent = 'Invalid code. Please try again.';
         btn.disabled = false; btn.textContent = 'Continue';
-        if (auto) { localStorage.removeItem('srp_officer_code'); localStorage.removeItem('srp_company_name'); }
+        if (auto) localStorage.removeItem('srp_officer_code');
         return;
       }
       const doc = query.docs[0];
@@ -241,31 +228,29 @@
         errorEl.textContent = 'Subscription suspended. Please contact support.';
         btn.disabled = false; btn.textContent = 'Continue'; return;
       }
-
       currentCompanyId = doc.id;
-      currentCompanyName = data.name;
+      if (remember) localStorage.setItem('srp_officer_code', code);
 
-      if (remember) {
-        localStorage.setItem('srp_officer_code', code);
-        localStorage.setItem('srp_company_name', data.name);
-      }
-
-      // Update nav
-      document.getElementById('navSaved').textContent = '✅ ' + data.name;
-      document.getElementById('navSaved').classList.add('visible');
-      document.getElementById('navSignout').style.display = 'block';
-
-      // Update header
+      // Apply company branding
+      const color = data.primaryColor ? '#' + data.primaryColor.replace('#','') : '#cc0000';
       document.getElementById('companyName').textContent = data.name + ' — Dispatcher';
+      document.title = data.name + ' — Dispatcher';
+      document.getElementById('mainHeader').style.borderBottomColor = color;
+
+      // Nav branding
+      document.getElementById('navCompanyName').textContent = data.name;
       if (data.logoUrl) {
+        document.getElementById('navLogoWrap').innerHTML = `<img src="${data.logoUrl}" class="nav-logo" onerror="this.style.display='none'" />`;
         document.getElementById('headerLogo').innerHTML = `<img src="${data.logoUrl}" style="width:32px;height:32px;border-radius:7px;object-fit:contain" onerror="this.parentElement.textContent='🛡️'" />`;
+      } else {
+        document.getElementById('navLogoWrap').innerHTML = `<div style="width:28px;height:28px;background:${color};border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;">🛡️</div>`;
       }
 
       document.getElementById('loginOverlay').style.display = 'none';
+      document.getElementById('mainNav').style.display = 'flex';
       document.getElementById('mainHeader').style.display = 'flex';
       document.getElementById('mainContent').style.display = 'flex';
       setTimeout(() => map.invalidateSize(), 100);
-
       startListening(doc.id);
     } catch(e) {
       errorEl.textContent = 'Connection error. Please try again.';
@@ -277,12 +262,10 @@
 
   function signOut() {
     localStorage.removeItem('srp_officer_code');
-    localStorage.removeItem('srp_company_name');
     if (unsubscribe) unsubscribe();
     location.reload();
   }
 
-  // ── Firebase listener ──────────────────────
   function startListening(companyId) {
     if (unsubscribe) unsubscribe();
     alerts = {}; markers = {};
@@ -319,7 +302,7 @@
     document.getElementById('audioLabel').textContent = audioEnabled ? 'Sound On' : 'Sound Off';
   }
 
-  const _sirenAudio = new Audio('https://raw.githubusercontent.com/c42die4/guardian-sos-signup/main/assets/siren.mp3');
+  const _sirenAudio = new Audio('https://c42die4.github.io/guardian-sos-signup/assets/siren.mp3');
   _sirenAudio.preload = 'auto';
 
   function playAlert() {
@@ -327,7 +310,6 @@
     try {
       _sirenAudio.currentTime = 0;
       _sirenAudio.play().catch(() => {
-        // Fallback beep if siren fails
         const ctx = new AudioContext(), osc = ctx.createOscillator(), gain = ctx.createGain();
         osc.connect(gain); gain.connect(ctx.destination);
         osc.frequency.setValueAtTime(880, ctx.currentTime);
