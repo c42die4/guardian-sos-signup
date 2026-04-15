@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Company Sign Up — Secure Response</title>
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <title>Start Free Trial — Cyber Warriors</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; }
-
     nav { background: #111; border-bottom: 1px solid #1f1f1f; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
-    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     .nav-icon { width: 34px; height: 34px; background: #cc0000; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
     .nav-brand span { font-size: 16px; font-weight: 700; color: #fff; }
     .nav-links { display: flex; gap: 8px; }
@@ -20,66 +18,100 @@
     .nav-link:hover { border-color: #cc0000; color: #fff; }
     .nav-link.active { border-color: #cc0000; color: #fff; background: rgba(204,0,0,0.1); }
     @media (max-width: 600px) { .nav-links { display: none; } }
-
     .hero { background: linear-gradient(135deg, #1a0000, #0a0a0a); padding: 48px 24px 32px; text-align: center; border-bottom: 1px solid #1f1f1f; }
-    .hero h2 { font-size: 28px; font-weight: 700; margin-bottom: 10px; }
+    .hero h2 { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
     .hero h2 span { color: #cc0000; }
-    .hero p { font-size: 15px; color: #888; max-width: 500px; margin: 0 auto 24px; line-height: 1.6; }
-    .features { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-    .feature { background: #141414; border: 1px solid #1f1f1f; border-radius: 8px; padding: 10px 16px; font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 6px; }
-
-    .container { max-width: 640px; margin: 40px auto; padding: 0 20px 60px; flex: 1; }
-
+    .hero p { font-size: 15px; color: #888; max-width: 500px; margin: 0 auto 12px; line-height: 1.6; }
+    .trial-badge { display: inline-block; background: #1a3a1a; border: 1px solid #2e7d32; border-radius: 20px; padding: 6px 16px; font-size: 13px; color: #4caf50; margin-bottom: 24px; }
+    /* STEPS */
+    .steps { display: flex; justify-content: center; align-items: center; gap: 0; margin: 32px auto 0; max-width: 500px; padding: 0 20px; }
+    .step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+    .step-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; background: #1f1f1f; color: #666; border: 2px solid #2a2a2a; transition: all 0.3s; }
+    .step-circle.active { background: #cc0000; color: #fff; border-color: #cc0000; }
+    .step-circle.done { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+    .step-label { font-size: 11px; color: #555; text-align: center; }
+    .step-label.active { color: #fff; }
+    .step-line { flex: 1; height: 2px; background: #2a2a2a; margin-bottom: 18px; max-width: 60px; }
+    .step-line.done { background: #2e7d32; }
+    /* PRICING */
+    .pricing-section { max-width: 980px; margin: 40px auto 60px; padding: 0 20px; }
+    .pricing-section h3 { text-align: center; font-size: 22px; margin-bottom: 8px; }
+    .pricing-section p { text-align: center; color: #666; font-size: 14px; margin-bottom: 32px; }
+    .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 720px) { .tiers { grid-template-columns: 1fr; } }
+    .tier { background: #141414; border: 2px solid #1f1f1f; border-radius: 16px; padding: 28px 24px; cursor: pointer; transition: all 0.2s; position: relative; }
+    .tier:hover { border-color: #cc0000; transform: translateY(-2px); }
+    .tier.selected { border-color: #cc0000; background: #1a0000; }
+    .tier.popular { border-color: #cc0000; }
+    .popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #cc0000; color: #fff; font-size: 11px; font-weight: 700; padding: 4px 14px; border-radius: 20px; white-space: nowrap; }
+    .tier-name { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+    .tier-price { font-size: 32px; font-weight: 700; color: #cc0000; margin: 12px 0 4px; }
+    .tier-price span { font-size: 14px; color: #666; font-weight: 400; }
+    .tier-devices { font-size: 13px; color: #888; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #1f1f1f; }
+    .tier-features { list-style: none; }
+    .tier-features li { font-size: 13px; color: #aaa; padding: 5px 0; display: flex; align-items: center; gap: 8px; }
+    .tier-features li::before { content: '✓'; color: #4caf50; font-weight: 700; flex-shrink: 0; }
+    .select-btn { width: 100%; margin-top: 20px; background: #1f1f1f; border: 1px solid #2a2a2a; border-radius: 8px; padding: 13px; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .tier.selected .select-btn, .tier.popular .select-btn { background: #cc0000; border-color: #cc0000; }
+    /* FORM */
+    .container { max-width: 680px; margin: 40px auto; padding: 0 20px 60px; flex: 1; }
+    .selected-plan-bar { background: #1a0000; border: 1px solid #cc0000; border-radius: 10px; padding: 14px 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; }
+    .plan-name { font-weight: 700; color: #fff; }
+    .plan-price { color: #cc0000; font-weight: 700; font-size: 18px; }
+    .change-plan { color: #888; font-size: 12px; cursor: pointer; text-decoration: underline; }
     .card { background: #141414; border: 1px solid #1f1f1f; border-radius: 16px; padding: 32px; }
     .card h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
     .card .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
-
     .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #cc0000; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; }
     .section-label::after { content: ''; flex: 1; height: 1px; background: #1f1f1f; }
-
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     @media (max-width: 500px) { .form-row { grid-template-columns: 1fr; } }
     .form-group { margin-bottom: 16px; }
     label { display: block; font-size: 13px; color: #bbb; margin-bottom: 6px; font-weight: 500; }
-    label .required { color: #cc0000; margin-left: 3px; }
+    label .req { color: #cc0000; margin-left: 3px; }
     input, select { width: 100%; background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px 14px; color: #f0f0f0; font-size: 15px; transition: border-color 0.2s; outline: none; -webkit-appearance: none; }
     input:focus, select:focus { border-color: #cc0000; }
     input::placeholder { color: #444; }
     .color-row { display: flex; align-items: center; gap: 12px; }
     .color-row input[type="color"] { width: 54px; height: 46px; padding: 4px; cursor: pointer; flex-shrink: 0; }
     .color-row input[type="text"] { flex: 1; }
-
-    .pricing-box { background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
-    .price-line { display: flex; justify-content: space-between; font-size: 14px; color: #888; padding: 4px 0; }
-    .price-line.total { border-top: 1px solid #2a2a2a; margin-top: 8px; padding-top: 10px; font-weight: 700; color: #fff; font-size: 15px; }
-    .price-line span:last-child { color: #cc0000; }
-    .price-line.total span:last-child { color: #4caf50; }
-    .note { font-size: 12px; color: #555; margin-top: 6px; }
-
+    .trial-info { background: #0a1f0a; border: 1px solid #2e7d32; border-radius: 10px; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: #4caf50; line-height: 1.8; }
+    .trial-info strong { color: #66bb6a; }
     .submit-btn { width: 100%; background: #cc0000; color: #fff; border: none; border-radius: 10px; padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 24px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
     .submit-btn:hover { background: #aa0000; }
     .submit-btn:disabled { background: #333; cursor: not-allowed; }
     .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-
-    .success-card { display: none; background: #0a1f0a; border: 1px solid #2e7d32; border-radius: 16px; padding: 40px 32px; text-align: center; }
+    /* SUCCESS */
+    .success-wrap { max-width: 620px; margin: 40px auto 60px; padding: 0 20px; }
+    .success-card { background: #0a1f0a; border: 1px solid #2e7d32; border-radius: 16px; padding: 40px 32px; text-align: center; }
     .success-card .icon { font-size: 56px; margin-bottom: 16px; }
-    .success-card h3 { font-size: 22px; color: #4caf50; margin-bottom: 10px; }
-    .success-card p { color: #888; font-size: 15px; line-height: 1.6; }
-    .success-card .code-box { background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px; margin: 20px 0; font-size: 13px; color: #777; }
-
+    .success-card h3 { font-size: 24px; color: #4caf50; margin-bottom: 10px; }
+    .success-card p { color: #888; font-size: 15px; line-height: 1.6; margin-bottom: 12px; }
+    .codes-box { background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 12px; padding: 20px; margin: 24px 0; text-align: left; }
+    .codes-box h4 { font-size: 11px; color: #555; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 1px; }
+    .code-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
+    .code-item:last-child { border-bottom: none; }
+    .code-label { font-size: 13px; color: #888; }
+    .code-value { font-family: monospace; font-size: 18px; color: #fff; font-weight: 700; letter-spacing: 1px; }
+    .code-value.officer { color: #2196f3; }
+    .code-value.client { color: #4caf50; }
+    .trial-notice { background: #1a1a00; border: 1px solid #665500; border-radius: 8px; padding: 12px 16px; margin: 16px 0; font-size: 13px; color: #ffcc02; line-height: 1.6; }
+    .apk-btn { display: inline-flex; align-items: center; gap: 10px; background: #1565c0; color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; margin: 6px 4px; transition: background 0.2s; }
+    .apk-btn:hover { background: #0d47a1; }
+    .apk-btn.grey { background: #1f1f1f; border: 1px solid #2a2a2a; }
+    .apk-btn.grey:hover { background: #2a2a2a; }
     .error-msg { background: #1f0000; border: 1px solid #cc0000; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #ff6666; margin-top: 12px; display: none; }
-
     footer { background: #111; border-top: 1px solid #1f1f1f; padding: 16px 24px; text-align: center; font-size: 12px; color: #444; }
   </style>
 </head>
 <body>
 
 <nav>
-  <div class="nav-brand">
+  <a href="index.html" class="nav-brand">
     <div class="nav-icon">🛡️</div>
-    <span>Secure Response</span>
-  </div>
+    <span>Cyber Warriors</span>
+  </a>
   <div class="nav-links">
     <a href="index.html" class="nav-link">Home</a>
     <a href="company-admin.html" class="nav-link">Company Portal</a>
@@ -89,34 +121,122 @@
 </nav>
 
 <div class="hero">
-  <h2>Register Your <span>Security Company</span></h2>
-  <p>Get your team set up with a professional emergency response system. Clients send SOS, officers respond instantly.</p>
-  <div class="features">
-    <div class="feature"><span>📍</span> Real-time tracking</div>
-    <div class="feature"><span>🚨</span> Instant alerts</div>
-    <div class="feature"><span>👮</span> Officer dashboard</div>
-    <div class="feature"><span>💊</span> Medical profiles</div>
+  <div class="trial-badge">🎉 14-Day Free Trial — No credit card required to start</div>
+  <h2>Emergency Response <span>Platform</span></h2>
+  <p>White-label panic button app for your security company. Clients send SOS, officers respond instantly with live GPS tracking.</p>
+</div>
+
+<!-- STEP INDICATOR -->
+<div class="steps" id="stepsBar">
+  <div class="step">
+    <div class="step-circle active" id="s1">1</div>
+    <div class="step-label active" id="sl1">Choose Plan</div>
+  </div>
+  <div class="step-line" id="l1"></div>
+  <div class="step">
+    <div class="step-circle" id="s2">2</div>
+    <div class="step-label" id="sl2">Your Details</div>
+  </div>
+  <div class="step-line" id="l2"></div>
+  <div class="step">
+    <div class="step-circle" id="s3">3</div>
+    <div class="step-label" id="sl3">You're Live!</div>
   </div>
 </div>
 
-<div class="container">
+<!-- STEP 1: PRICING -->
+<div id="pricingStep" class="pricing-section">
+  <h3 style="margin-top:32px">Choose Your Plan</h3>
+  <p>All plans include a 14-day free trial. No credit card needed to start. Cancel anytime with 30 days notice.</p>
+  <div class="tiers">
 
-  <div class="card" id="formCard">
-    <h3>Company Registration</h3>
-    <p class="subtitle">Fill in your details and we'll get you set up within 24 hours.</p>
+    <div class="tier" id="tier-starter" onclick="selectTier('starter')">
+      <div class="tier-name">Starter</div>
+      <div class="tier-price">R999 <span>/ month</span></div>
+      <div class="tier-devices">Up to 5 officer devices · Unlimited clients</div>
+      <ul class="tier-features">
+        <li>Live GPS tracking</li>
+        <li>Instant SOS alerts</li>
+        <li>WhatsApp notifications</li>
+        <li>Officer mobile app</li>
+        <li>Medical profiles</li>
+        <li>Web dispatcher dashboard</li>
+        <li>14-day free trial</li>
+      </ul>
+      <button class="select-btn">Start Free Trial</button>
+    </div>
+
+    <div class="tier popular" id="tier-professional" onclick="selectTier('professional')">
+      <div class="popular-badge">⭐ Most Popular</div>
+      <div class="tier-name">Professional</div>
+      <div class="tier-price">R1999 <span>/ month</span></div>
+      <div class="tier-devices">Up to 15 officer devices · Unlimited clients</div>
+      <ul class="tier-features">
+        <li>Live GPS tracking</li>
+        <li>Instant SOS alerts</li>
+        <li>WhatsApp notifications</li>
+        <li>Officer mobile app</li>
+        <li>Medical profiles</li>
+        <li>Web dispatcher dashboard</li>
+        <li>HUD windscreen navigation</li>
+        <li>Priority email support</li>
+        <li>14-day free trial</li>
+      </ul>
+      <button class="select-btn">Start Free Trial</button>
+    </div>
+
+    <div class="tier" id="tier-enterprise" onclick="selectTier('enterprise')">
+      <div class="tier-name">Enterprise</div>
+      <div class="tier-price">R3499 <span>/ month</span></div>
+      <div class="tier-devices">Unlimited officer devices · Unlimited clients</div>
+      <ul class="tier-features">
+        <li>Live GPS tracking</li>
+        <li>Instant SOS alerts</li>
+        <li>WhatsApp notifications</li>
+        <li>Officer mobile app</li>
+        <li>Medical profiles</li>
+        <li>Web dispatcher dashboard</li>
+        <li>HUD windscreen navigation</li>
+        <li>Custom branded APK</li>
+        <li>Dedicated support line</li>
+        <li>Custom branding setup</li>
+        <li>14-day free trial</li>
+      </ul>
+      <button class="select-btn">Start Free Trial</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- STEP 2: FORM -->
+<div class="container" id="formStep" style="display:none">
+  <div class="selected-plan-bar">
+    <div>
+      <div class="plan-name" id="planNameBar">Professional Plan</div>
+      <div style="font-size:12px;color:#666" id="planDevicesBar">Up to 15 officer devices</div>
+    </div>
+    <div style="text-align:right">
+      <div class="plan-price" id="planPriceBar">R1999/mo</div>
+      <div class="change-plan" onclick="showPricing()">↩ Change plan</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Company Details</h3>
+    <p class="subtitle">Your account will be created instantly — you can start immediately.</p>
 
     <form id="signupForm">
-      <div class="section-label">Company Details</div>
+      <div class="section-label">Company Information</div>
       <div class="form-group">
-        <label>Company Name <span class="required">*</span></label>
-        <input type="text" id="company_name" placeholder="ABC Security (Pty) Ltd" required />
+        <label>Company Name <span class="req">*</span></label>
+        <input type="text" id="company_name" placeholder="Ironhide Security (Pty) Ltd" required />
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Primary Colour <span class="required">*</span></label>
+          <label>Brand Colour <span class="req">*</span></label>
           <div class="color-row">
             <input type="color" id="colorPicker" value="#cc0000" oninput="syncColor(this.value)" />
-            <input type="text" id="primary_color" value="#cc0000" placeholder="#cc0000" oninput="syncPicker(this.value)" maxlength="7" />
+            <input type="text" id="primary_color" value="#cc0000" oninput="syncPicker(this.value)" maxlength="7" />
           </div>
         </div>
         <div class="form-group">
@@ -125,69 +245,98 @@
         </div>
       </div>
       <div class="form-group">
-        <label>Emergency Control Room Number <span class="required">*</span></label>
+        <label>Emergency Control Room Number <span class="req">*</span></label>
         <input type="tel" id="emergency_phone" placeholder="011 123 4567" required />
-        <small style="color:#555;font-size:12px">Shown as direct call button on client SOS screen.</small>
-      </div>
-      <div class="form-group">
-        <label>Company Website <span style="color:#555">(optional)</span></label>
-        <input type="url" id="website" placeholder="https://www.yourcompany.co.za" />
+        <small style="color:#555;font-size:12px;display:block;margin-top:4px">Shown as a call button on the client SOS screen.</small>
       </div>
 
       <div class="section-label">Contact Person</div>
       <div class="form-row">
         <div class="form-group">
-          <label>Full Name <span class="required">*</span></label>
-          <input type="text" id="contact_name" placeholder="John Smith" required />
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="contact_name" placeholder="Riaan van der Merwe" required />
         </div>
         <div class="form-group">
-          <label>Email Address <span class="required">*</span></label>
-          <input type="email" id="contact_email" placeholder="john@abcsecurity.co.za" required />
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="contact_email" placeholder="riaan@ironhide.co.za" required />
         </div>
       </div>
       <div class="form-group">
-        <label>Phone Number <span class="required">*</span></label>
+        <label>Phone Number <span class="req">*</span></label>
         <input type="tel" id="contact_phone" placeholder="082 123 4567" required />
       </div>
 
-      <div class="section-label">Subscription</div>
-      <div class="form-group">
-        <label>Number of Officer Devices <span class="required">*</span></label>
-        <select id="device_count" onchange="updatePricing()" required>
-          <option value="">— Select —</option>
-          <option value="5">5 officers</option>
-          <option value="10">10 officers</option>
-          <option value="20">20 officers</option>
-          <option value="50">50 officers</option>
-          <option value="100">100 officers</option>
-        </select>
+      <div class="section-label">Free Trial</div>
+      <div class="trial-info">
+        🎉 <strong>14 days completely free.</strong><br>
+        Your account is activated immediately — no waiting, no approval needed.<br>
+        No credit card required now. We will contact you before your trial ends to arrange billing.
       </div>
-      <div class="pricing-box" id="pricingBox" style="display:none">
-        <div class="price-line"><span>Base fee</span><span>R500 / month</span></div>
-        <div class="price-line"><span>Officers (<span id="deviceCountLabel">0</span> × R50)</span><span id="deviceCost">R0</span></div>
-        <div class="price-line total"><span>Total per month</span><span id="totalCost">R0</span></div>
-      </div>
-      <p class="note">💡 Client devices are unlimited. You will receive an invoice after registration.</p>
 
       <div class="error-msg" id="errorMsg"></div>
 
       <button type="submit" class="submit-btn" id="submitBtn">
-        <span>🚀</span> Submit Registration
+        <span>🚀</span> Create My Account — Start Free Trial
       </button>
+      <p style="text-align:center;font-size:12px;color:#444;margin-top:12px">No spam. No obligation. Cancel anytime.</p>
     </form>
   </div>
-
-  <div class="card success-card" id="successCard">
-    <div class="icon">✅</div>
-    <h3>Registration Received!</h3>
-    <p>Thank you for registering. We will review your application and get back to you within <strong>24 hours</strong>.</p>
-    <div class="code-box">Once your invoice is paid, you will receive your registration codes via email. Your team can then install the app and get started.</div>
-    <p style="margin-top:16px">Questions? <a href="index.html" style="color:#cc0000">Return to home</a></p>
-  </div>
-
 </div>
 
-<footer>© 2026 Secure Response Platform · All rights reserved</footer>
+<!-- STEP 3: SUCCESS -->
+<div class="success-wrap" id="successStep" style="display:none">
+  <div class="success-card">
+    <div class="icon">🎉</div>
+    <h3>You're Live!</h3>
+    <p>Your account has been created. Share these codes with your team right now — they can install the app and get started immediately.</p>
+
+    <div class="trial-notice">
+      ⏱️ Your 14-day free trial started today.<br>
+      We will contact <strong id="trialEmail"></strong> before it ends to set up your subscription.
+    </div>
+
+    <div class="codes-box">
+      <h4>Your Registration Codes — Save These!</h4>
+      <div class="code-item">
+        <span class="code-label">👮 Officer Code</span>
+        <span class="code-value officer" id="dispOfficer">—</span>
+      </div>
+      <div class="code-item">
+        <span class="code-label">👤 Client Code</span>
+        <span class="code-value client" id="dispClient">—</span>
+      </div>
+      <div class="code-item">
+        <span class="code-label">📦 Plan</span>
+        <span class="code-value" id="dispPlan" style="color:#cc0000;font-size:14px">—</span>
+      </div>
+      <div class="code-item">
+        <span class="code-label">📅 Trial Ends</span>
+        <span class="code-value" id="dispTrial" style="color:#ffcc02;font-size:14px">—</span>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:#666;margin-bottom:20px">
+      Officers download the app below and enter the <strong style="color:#2196f3">Officer Code</strong>.<br>
+      Clients enter the <strong style="color:#4caf50">Client Code</strong> to register their devices.
+    </p>
+
+    <a href="https://github.com/c42die4/guardian_sos/releases/latest" class="apk-btn" target="_blank">
+      📱 Download Officer App (APK)
+    </a>
+    <a href="dashboard.html" class="apk-btn grey">
+      🖥️ Open Dispatcher Dashboard
+    </a>
+    <a href="company-admin.html" class="apk-btn grey">
+      ⚙️ Company Admin Portal
+    </a>
+
+    <p style="margin-top:24px;font-size:12px;color:#444">
+      Keep your codes safe. They are also available anytime in your Company Admin Portal.
+    </p>
+  </div>
+</div>
+
+<footer>© 2026 Cyber Warriors · cyberwarriors.co.za · Emergency Response Platform</footer>
 
 <script>
   const firebaseConfig = {
@@ -200,33 +349,88 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-  emailjs.init('_WKuuF_twjhvg9Y9X');
+
+  // ── Plan definitions ─────────────────────────────────────────────────────────
+  // To change trial days, pricing, or device limits — edit here only
+  const CONFIG = {
+    trialDays: 14,
+    plans: {
+      starter:      { name: 'Starter',      price: 999,  maxDevices: 5,   label: 'Up to 5 officer devices' },
+      professional: { name: 'Professional', price: 1999, maxDevices: 15,  label: 'Up to 15 officer devices' },
+      enterprise:   { name: 'Enterprise',   price: 3499, maxDevices: 9999, label: 'Unlimited officer devices' },
+    }
+  };
+
+  let selectedPlan = null;
+
+  function selectTier(planKey) {
+    selectedPlan = planKey;
+    document.querySelectorAll('.tier').forEach(t => t.classList.remove('selected'));
+    document.getElementById('tier-' + planKey).classList.add('selected');
+    setTimeout(() => showForm(), 200);
+  }
+
+  function showForm() {
+    const p = CONFIG.plans[selectedPlan];
+    document.getElementById('pricingStep').style.display = 'none';
+    document.getElementById('formStep').style.display = 'block';
+    document.getElementById('planNameBar').textContent = p.name + ' Plan';
+    document.getElementById('planDevicesBar').textContent = p.label;
+    document.getElementById('planPriceBar').textContent = 'R' + p.price.toLocaleString() + '/mo';
+    setStep(2);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showPricing() {
+    document.getElementById('pricingStep').style.display = 'block';
+    document.getElementById('formStep').style.display = 'none';
+    setStep(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function setStep(n) {
+    for (let i = 1; i <= 3; i++) {
+      const c = document.getElementById('s' + i);
+      const l = document.getElementById('sl' + i);
+      if (i < n) { c.className = 'step-circle done'; c.textContent = '✓'; l.className = 'step-label'; }
+      else if (i === n) { c.className = 'step-circle active'; c.textContent = i; l.className = 'step-label active'; }
+      else { c.className = 'step-circle'; c.textContent = i; l.className = 'step-label'; }
+      if (i < 3) {
+        const line = document.getElementById('l' + i);
+        line.className = 'step-line' + (i < n ? ' done' : '');
+      }
+    }
+  }
 
   function syncColor(val) { document.getElementById('primary_color').value = val; }
   function syncPicker(val) { if (/^#[0-9A-Fa-f]{6}$/.test(val)) document.getElementById('colorPicker').value = val; }
 
-  function updatePricing() {
-    const count = parseInt(document.getElementById('device_count').value) || 0;
-    const deviceCost = count * 50;
-    const total = 500 + deviceCost;
-    document.getElementById('deviceCountLabel').textContent = count;
-    document.getElementById('deviceCost').textContent = 'R' + deviceCost;
-    document.getElementById('totalCost').textContent = 'R' + total;
-    document.getElementById('pricingBox').style.display = count > 0 ? 'block' : 'none';
-  }
-
   function generateCode(name, type) {
-    const prefix = name.replace(/[^a-zA-Z]/g,'').substring(0,4).toUpperCase() || 'COMP';
+    const prefix = name.replace(/[^a-zA-Z]/g, '').substring(0, 4).toUpperCase() || 'COMP';
     const suffix = Math.floor(1000 + Math.random() * 9000);
-    return `${prefix}-${type}-${suffix}`;
+    return prefix + '-' + type + '-' + suffix;
   }
 
   function generateCompanyId(name) {
-    return name.toLowerCase().replace(/[^a-z0-9]/g,'_').replace(/_+/g,'_').substring(0,30) + '_' + Date.now();
+    return name.toLowerCase().replace(/[^a-z0-9]/g, '_').replace(/_+/g, '_').substring(0, 20) + '_' + Date.now();
+  }
+
+  function trialEndDate() {
+    const d = new Date();
+    d.setDate(d.getDate() + CONFIG.trialDays);
+    return d.toLocaleDateString('en-ZA', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+
+  function trialEndISO() {
+    const d = new Date();
+    d.setDate(d.getDate() + CONFIG.trialDays);
+    return d.toISOString().split('T')[0];
   }
 
   document.getElementById('signupForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+    if (!selectedPlan) return;
+
     const btn = document.getElementById('submitBtn');
     const errorMsg = document.getElementById('errorMsg');
     errorMsg.style.display = 'none';
@@ -236,53 +440,57 @@
     const contactEmail = document.getElementById('contact_email').value.trim();
     const contactPhone = document.getElementById('contact_phone').value.trim();
     const emergencyPhone = document.getElementById('emergency_phone').value.trim();
-    const deviceCount = document.getElementById('device_count').value;
     const logoUrl = document.getElementById('logo_url').value.trim();
-    const website = document.getElementById('website').value.trim();
-    const primaryColor = document.getElementById('primary_color').value.trim().replace('#','');
-
-    if (!deviceCount) { errorMsg.textContent = 'Please select the number of officer devices.'; errorMsg.style.display = 'block'; return; }
+    const primaryColor = document.getElementById('primary_color').value.trim().replace('#', '');
+    const plan = CONFIG.plans[selectedPlan];
 
     btn.disabled = true;
-    btn.innerHTML = '<div class="spinner"></div> Submitting...';
+    btn.innerHTML = '<div class="spinner"></div> Creating your account...';
 
     try {
       const officerCode = generateCode(companyName, 'OFF');
-      const clientCode = generateCode(companyName, 'CLI');
-      const companyId = generateCompanyId(companyName);
+      const clientCode  = generateCode(companyName, 'CLI');
+      const companyId   = generateCompanyId(companyName);
+      const trialEnd    = trialEndISO();
 
       await db.collection('companies').doc(companyId).set({
         name: companyName,
-        contactName, contactEmail, contactPhone,
-        emergencyPhone, logoUrl, website,
+        contactName,
+        contactEmail,
+        contactPhone,
+        emergencyPhone,
+        logoUrl,
         primaryColor,
-        maxDevices: parseInt(deviceCount),
-        officerCode, clientCode,
-        isActive: false,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        maxDevices:    plan.maxDevices,
+        officerCode,
+        clientCode,
+        isActive:      true,        // Live immediately
+        isTrial:       true,
+        trialDays:     CONFIG.trialDays,
+        trialEnds:     trialEnd,
+        plan:          selectedPlan,
+        planName:      plan.name,
+        planPrice:     plan.price,
+        billingStatus: 'trial',     // trial | active | suspended
+        createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
       });
 
-      await emailjs.send('service_sxhcn8m', 'template_qox5nkh', {
-        company_name: companyName,
-        contact_name: contactName,
-        contact_email: contactEmail,
-        contact_phone: contactPhone,
-        device_count: deviceCount,
-        logo_url: logoUrl || 'None provided',
-        primary_color: '#' + primaryColor,
-        registration_code: '👮 OFFICER CODE: ' + officerCode + '\n👤 CLIENT CODE: ' + clientCode,
-        company_id: companyId,
-      });
-
-      document.getElementById('formCard').style.display = 'none';
-      document.getElementById('successCard').style.display = 'block';
+      // Show success screen
+      document.getElementById('formStep').style.display = 'none';
+      document.getElementById('successStep').style.display = 'block';
+      document.getElementById('dispOfficer').textContent = officerCode;
+      document.getElementById('dispClient').textContent = clientCode;
+      document.getElementById('dispPlan').textContent = plan.name + ' — R' + plan.price.toLocaleString() + '/month';
+      document.getElementById('dispTrial').textContent = trialEndDate();
+      document.getElementById('trialEmail').textContent = contactEmail;
+      setStep(3);
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-    } catch(err) {
+    } catch (err) {
       errorMsg.textContent = 'Something went wrong: ' + err.message;
       errorMsg.style.display = 'block';
       btn.disabled = false;
-      btn.innerHTML = '<span>🚀</span> Submit Registration';
+      btn.innerHTML = '<span>🚀</span> Create My Account — Start Free Trial';
     }
   });
 </script>

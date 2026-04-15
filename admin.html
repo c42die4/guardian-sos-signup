@@ -363,6 +363,8 @@
           <td>
             <div>${escHtml(d.contactName || '—')}</div>
             <div style="font-size:12px;color:#666">${escHtml(d.contactEmail || '')}</div>
+            ${d.planName ? `<div style="font-size:11px;color:#cc0000;margin-top:2px">${escHtml(d.planName)} · R${(d.planPrice||0).toLocaleString()}/mo</div>` : ''}
+            ${d.trialEnds ? `<div style="font-size:11px;color:#ffcc02;margin-top:2px">Trial ends: ${escHtml(d.trialEnds)}</div>` : ''}
           </td>
           <td>
             <span style="font-weight:600">${deviceCount}</span>
@@ -370,7 +372,7 @@
           </td>
           <td>
             <span class="badge ${isActive ? 'badge-green' : 'badge-red'}">
-              ${isActive ? 'Active' : 'Suspended'}
+              ${isActive ? (d.isTrial ? '🎯 Trial' : 'Active') : 'Suspended'}
             </span>
           </td>
           <td>
