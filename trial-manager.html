@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trial Manager — Cyber Warriors Admin</title>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; padding: 32px 20px; }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    .subtitle { color: #666; font-size: 14px; margin-bottom: 32px; }
+    .card { background: #141414; border: 1px solid #1f1f1f; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+    .card h2 { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #cc0000; }
+    .btn { background: #cc0000; color: #fff; border: none; border-radius: 8px; padding: 12px 24px; font-size: 14px; font-weight: 600; cursor: pointer; margin-right: 8px; margin-bottom: 8px; transition: background 0.2s; }
+    .btn:hover { background: #aa0000; }
+    .btn.grey { background: #1f1f1f; border: 1px solid #2a2a2a; }
+    .btn.grey:hover { background: #2a2a2a; }
+    .btn.green { background: #2e7d32; }
+    .btn.green:hover { background: #1b5e20; }
+    .log { background: #0a0a0a; border: 1px solid #1f1f1f; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 13px; min-height: 200px; max-height: 400px; overflow-y: auto; }
+    .log-entry { padding: 4px 0; border-bottom: 1px solid #111; }
+    .log-entry.ok { color: #4caf50; }
+    .log-entry.warn { color: #ffcc02; }
+    .log-entry.err { color: #ff6666; }
+    .log-entry.info { color: #888; }
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+    @media (max-width: 600px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+    .stat { background: #141414; border: 1px solid #1f1f1f; border-radius: 10px; padding: 16px; text-align: center; }
+    .stat-num { font-size: 32px; font-weight: 700; color: #cc0000; }
+    .stat-label { font-size: 12px; color: #666; margin-top: 4px; }
+    .company-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
+    .company-row:last-child { border-bottom: none; }
+    .company-name { font-weight: 600; }
+    .company-meta { font-size: 12px; color: #666; margin-top: 2px; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+    .badge-trial { background: #1a3a1a; color: #4caf50; border: 1px solid #2e7d32; }
+    .badge-warn { background: #3a2a00; color: #ffcc02; border: 1px solid #665500; }
+    .badge-expired { background: #3e0000; color: #ff6666; border: 1px solid #cc0000; }
+    .badge-active { background: #1b5e20; color: #4caf50; }
+    .settings-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .settings-row label { color: #aaa; font-size: 13px; min-width: 180px; }
+    .settings-row input { background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 6px; padding: 8px 12px; color: #f0f0f0; font-size: 14px; width: 120px; }
+    .password-gate { position: fixed; inset: 0; background: #0a0a0a; display: flex; align-items: center; justify-content: center; z-index: 999; }
+    .password-box { background: #141414; border: 1px solid #1f1f1f; border-radius: 16px; padding: 40px; text-align: center; max-width: 360px; width: 100%; }
+    .password-box h2 { margin-bottom: 20px; }
+    .password-box input { width: 100%; background: #0f0f0f; border: 1px solid #2a2a2a; border-radius: 8px; padding: 12px; color: #f0f0f0; font-size: 15px; margin-bottom: 12px; outline: none; }
+    .password-box input:focus { border-color: #cc0000; }
+  </style>
+</head>
+<body>
+
+<!-- Password Gate -->
+<div class="password-gate" id="gate">
+  <div class="password-box">
+    <div style="font-size:48px;margin-bottom:16px">🛡️</div>
+    <h2>Trial Manager</h2>
+    <input type="password" id="gatePass" placeholder="Admin password" onkeydown="if(event.key==='Enter')checkPass()" />
+    <button class="btn" onclick="checkPass()" style="width:100%">Access</button>
+    <div id="gateErr" style="color:#ff6666;font-size:13px;margin-top:8px;display:none">Incorrect password</div>
+  </div>
+</div>
+
+<h1>⏱️ Trial Manager</h1>
+<p class="subtitle">Automatically manage trial periods, send warnings and suspend expired accounts.</p>
+
+<!-- STATS -->
+<div class="stat-grid">
+  <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total Companies</div></div>
+  <div class="stat"><div class="stat-num" id="statTrial" style="color:#4caf50">—</div><div class="stat-label">Active Trials</div></div>
+  <div class="stat"><div class="stat-num" id="statWarning" style="color:#ffcc02">—</div><div class="stat-label">Expiring Soon</div></div>
+  <div class="stat"><div class="stat-num" id="statExpired" style="color:#ff6666">—</div><div class="stat-label">Expired Trials</div></div>
+</div>
+
+<!-- SETTINGS -->
+<div class="card">
+  <h2>⚙️ Settings</h2>
+  <div class="settings-row">
+    <label>Trial duration (days)</label>
+    <input type="number" id="settingTrialDays" value="14" min="1" max="90" />
+  </div>
+  <div class="settings-row">
+    <label>Warning before expiry (days)</label>
+    <input type="number" id="settingWarnDays" value="3" min="1" max="10" />
+  </div>
+  <div class="settings-row">
+    <label>Your notification email</label>
+    <input type="email" id="settingAdminEmail" value="christo.prinsloo@gmail.com" style="width:260px" />
+  </div>
+  <div class="settings-row">
+    <label>Your phone number</label>
+    <input type="tel" id="settingPhone" value="+27000000000" style="width:180px" />
+  </div>
+</div>
+
+<!-- ACTIONS -->
+<div class="card">
+  <h2>🚀 Actions</h2>
+  <button class="btn" onclick="runCheck()">▶ Run Trial Check Now</button>
+  <button class="btn grey" onclick="loadCompanies()">🔄 Refresh List</button>
+  <button class="btn green" onclick="sendTestEmail()">📧 Send Test Email</button>
+  <p style="font-size:12px;color:#555;margin-top:12px">
+    Run this page daily (bookmark it and open it each morning) to automatically suspend expired trials and send warnings.
+    Once PayFast is connected this will run automatically.
+  </p>
+</div>
+
+<!-- TRIAL COMPANIES -->
+<div class="card">
+  <h2>🎯 Trial Companies</h2>
+  <div id="trialList"><div style="color:#555">Loading...</div></div>
+</div>
+
+<!-- LOG -->
+<div class="card">
+  <h2>📋 Activity Log</h2>
+  <div class="log" id="log"></div>
+</div>
+
+<script>
+  const ADMIN_PASSWORD = 'Guardian@Admin2024';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA1yIuvCuplOsaPgRXSCcjOz2z3ful5AeM",
+    authDomain: "guardian-os-80042.firebaseapp.com",
+    projectId: "guardian-os-80042",
+    storageBucket: "guardian-os-80042.firebasestorage.app",
+    messagingSenderId: "293568464040",
+    appId: "1:293568464040:web:610554596a3803acfd2e9d"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  emailjs.init('_WKuuF_twjhvg9Y9X');
+
+  function checkPass() {
+    const val = document.getElementById('gatePass').value;
+    if (val === ADMIN_PASSWORD) {
+      document.getElementById('gate').style.display = 'none';
+      loadCompanies();
+    } else {
+      document.getElementById('gateErr').style.display = 'block';
+    }
+  }
+
+  function log(msg, type = 'info') {
+    const el = document.getElementById('log');
+    const time = new Date().toLocaleTimeString('en-ZA');
+    el.innerHTML += `<div class="log-entry ${type}">[${time}] ${msg}</div>`;
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function daysUntil(dateStr) {
+    if (!dateStr) return null;
+    const end = new Date(dateStr);
+    const now = new Date();
+    now.setHours(0,0,0,0);
+    end.setHours(0,0,0,0);
+    return Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+  }
+
+  async function loadCompanies() {
+    log('Loading companies...');
+    const snap = await db.collection('companies').get();
+    const companies = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    const trials = companies.filter(c => c.isTrial);
+    const warnDays = parseInt(document.getElementById('settingWarnDays').value) || 3;
+
+    let total = companies.length;
+    let trialCount = 0;
+    let warnCount = 0;
+    let expiredCount = 0;
+
+    let html = '';
+    trials.forEach(c => {
+      const days = daysUntil(c.trialEnds);
+      const isExpired = days !== null && days <= 0;
+      const isWarning = days !== null && days > 0 && days <= warnDays;
+      const isOk = days !== null && days > warnDays;
+
+      if (isExpired) expiredCount++;
+      else if (isWarning) warnCount++;
+      else trialCount++;
+
+      let badge = '';
+      if (isExpired) badge = '<span class="badge badge-expired">EXPIRED</span>';
+      else if (isWarning) badge = `<span class="badge badge-warn">⚠️ ${days} days left</span>`;
+      else badge = `<span class="badge badge-trial">✓ ${days} days left</span>`;
+
+      html += `
+        <div class="company-row">
+          <div>
+            <div class="company-name">${c.name || c.id}</div>
+            <div class="company-meta">${c.contactEmail || '—'} · ${c.planName || 'Unknown'} · Ends: ${c.trialEnds || '—'}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            ${badge}
+            ${isExpired && c.isActive ? `<button class="btn" style="padding:6px 12px;font-size:12px" onclick="suspendCompany('${c.id}','${c.name}')">Suspend</button>` : ''}
+            ${isWarning ? `<button class="btn grey" style="padding:6px 12px;font-size:12px" onclick="sendWarning('${c.id}','${c.name}','${c.contactEmail}','${c.contactName}',${days})">Warn</button>` : ''}
+          </div>
+        </div>`;
+    });
+
+    if (trials.length === 0) html = '<div style="color:#555">No trial companies found.</div>';
+
+    document.getElementById('trialList').innerHTML = html;
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statTrial').textContent = trialCount;
+    document.getElementById('statWarning').textContent = warnCount;
+    document.getElementById('statExpired').textContent = expiredCount;
+
+    log(`Loaded ${total} companies. Trials: ${trialCount} active, ${warnCount} expiring soon, ${expiredCount} expired.`, 'ok');
+  }
+
+  async function suspendCompany(id, name) {
+    log(`Suspending ${name}...`, 'warn');
+    try {
+      await db.collection('companies').doc(id).update({
+        isActive: false,
+        billingStatus: 'expired',
+        suspendedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      log(`✅ ${name} suspended successfully.`, 'ok');
+      await loadCompanies();
+    } catch(e) {
+      log(`❌ Failed to suspend ${name}: ${e.message}`, 'err');
+    }
+  }
+
+  async function sendWarning(id, name, email, contactName, daysLeft) {
+    log(`Sending ${daysLeft}-day warning to ${name} (${email})...`, 'warn');
+    const adminEmail = document.getElementById('settingAdminEmail').value;
+    const phone = document.getElementById('settingPhone').value;
+    try {
+      await emailjs.send('service_sxhcn8m', 'template_qox5nkh', {
+        company_name: name,
+        contact_name: contactName || 'there',
+        contact_email: email,
+        contact_phone: '',
+        device_count: '',
+        logo_url: '',
+        primary_color: '',
+        registration_code: `Your trial expires in ${daysLeft} day${daysLeft === 1 ? '' : 's'}.\n\nTo continue using the Guardian SOS platform without interruption, please subscribe at:\nhttps://c42die4.github.io/guardian-sos-signup/signup.html\n\nOr contact us:\n📞 ${phone}\n📧 ${adminEmail}\n\nIf you have already arranged payment, please ignore this message.`,
+        company_id: id,
+      });
+
+      // Mark warning as sent
+      await db.collection('companies').doc(id).update({
+        warningSentAt: firebase.firestore.FieldValue.serverTimestamp(),
+        warningSentDays: daysLeft,
+      });
+
+      log(`✅ Warning email sent to ${email}`, 'ok');
+    } catch(e) {
+      log(`❌ Failed to send warning: ${e.message}`, 'err');
+    }
+  }
+
+  async function runCheck() {
+    log('=== Starting automatic trial check ===', 'info');
+    const snap = await db.collection('companies').get();
+    const companies = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const warnDays = parseInt(document.getElementById('settingWarnDays').value) || 3;
+
+    let suspended = 0;
+    let warned = 0;
+    let ok = 0;
+
+    for (const c of companies) {
+      if (!c.isTrial) continue;
+      const days = daysUntil(c.trialEnds);
+      if (days === null) continue;
+
+      if (days <= 0 && c.isActive) {
+        // EXPIRED — suspend
+        await suspendCompany(c.id, c.name);
+
+        // Notify admin
+        const adminEmail = document.getElementById('settingAdminEmail').value;
+        try {
+          await emailjs.send('service_sxhcn8m', 'template_qox5nkh', {
+            company_name: '⚠️ TRIAL EXPIRED: ' + c.name,
+            contact_name: 'Christo',
+            contact_email: adminEmail,
+            contact_phone: '',
+            device_count: '',
+            logo_url: '',
+            primary_color: '',
+            registration_code: `${c.name} trial has expired and has been automatically suspended.\n\nContact: ${c.contactName} — ${c.contactEmail} — ${c.contactPhone}\nPlan: ${c.planName} — R${c.planPrice}/month\n\nLog into admin panel to activate once payment is received.`,
+            company_id: c.id,
+          });
+          log(`📧 Admin notified about ${c.name} expiry`, 'ok');
+        } catch(e) {
+          log(`⚠️ Could not notify admin: ${e.message}`, 'warn');
+        }
+        suspended++;
+
+      } else if (days > 0 && days <= warnDays && !c.warningSentAt) {
+        // EXPIRING SOON — send warning
+        await sendWarning(c.id, c.name, c.contactEmail, c.contactName, days);
+        warned++;
+
+      } else if (days > 0) {
+        log(`✓ ${c.name} — ${days} days remaining`, 'ok');
+        ok++;
+      }
+    }
+
+    log(`=== Check complete: ${suspended} suspended, ${warned} warned, ${ok} healthy ===`,
+        suspended > 0 || warned > 0 ? 'warn' : 'ok');
+    await loadCompanies();
+  }
+
+  async function sendTestEmail() {
+    const adminEmail = document.getElementById('settingAdminEmail').value;
+    log(`Sending test email to ${adminEmail}...`);
+    try {
+      await emailjs.send('service_sxhcn8m', 'template_qox5nkh', {
+        company_name: 'TEST — Trial Manager Working',
+        contact_name: 'Christo',
+        contact_email: adminEmail,
+        contact_phone: '',
+        device_count: '',
+        logo_url: '',
+        primary_color: '',
+        registration_code: 'This is a test email from your Trial Manager system. Everything is working correctly!',
+        company_id: 'test',
+      });
+      log('✅ Test email sent to ' + adminEmail, 'ok');
+    } catch(e) {
+      log('❌ Test email failed: ' + e.message, 'err');
+    }
+  }
+</script>
+</body>
+</html>
