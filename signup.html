@@ -166,10 +166,10 @@
       <button class="select-btn">Start Free Trial</button>
     </div>
 
-    <div class="tier popular" id="tier-professional" onclick="selectTier('professional')">
+    <div class="tier popular" id="tier-growth" onclick="selectTier('growth')">
       <div class="popular-badge">⭐ Most Popular</div>
-      <div class="tier-name">Professional</div>
-      <div class="tier-price">R1999 <span>/ month</span></div>
+      <div class="tier-name">Growth</div>
+      <div class="tier-price">R2,500 <span>/ month</span></div>
       <div class="tier-devices">Up to 15 officer devices · Unlimited clients</div>
       <ul class="tier-features">
         <li>Live GPS tracking</li>
@@ -185,10 +185,10 @@
       <button class="select-btn">Start Free Trial</button>
     </div>
 
-    <div class="tier" id="tier-enterprise" onclick="selectTier('enterprise')">
-      <div class="tier-name">Enterprise</div>
-      <div class="tier-price">R3499 <span>/ month</span></div>
-      <div class="tier-devices">Unlimited officer devices · Unlimited clients</div>
+    <div class="tier" id="tier-professional" onclick="selectTier('professional')">
+      <div class="tier-name">Professional</div>
+      <div class="tier-price">R6,500 <span>/ month</span></div>
+      <div class="tier-devices">Up to 50 officer devices · Unlimited clients</div>
       <ul class="tier-features">
         <li>Live GPS tracking</li>
         <li>Instant SOS alerts</li>
@@ -197,14 +197,121 @@
         <li>Medical profiles</li>
         <li>Web dispatcher dashboard</li>
         <li>HUD windscreen navigation</li>
+        <li>Priority email support</li>
         <li>Custom branded APK</li>
-        <li>Dedicated support line</li>
-        <li>Custom branding setup</li>
         <li>14-day free trial</li>
       </ul>
       <button class="select-btn">Start Free Trial</button>
     </div>
 
+  </div>
+
+  <!-- ENTERPRISE QUOTE -->
+  <div style="margin-top:32px;background:#141414;border:2px solid #cc0000;border-radius:16px;padding:32px;text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">🏢</div>
+    <div style="font-size:22px;font-weight:700;margin-bottom:8px">Enterprise</div>
+    <div style="font-size:14px;color:#888;margin-bottom:8px">Unlimited officer devices · Unlimited clients · Custom setup</div>
+    <div style="font-size:28px;font-weight:700;color:#cc0000;margin-bottom:8px">Custom Pricing</div>
+    <div style="font-size:13px;color:#666;margin-bottom:20px">Tailored to your operation size and requirements</div>
+    <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:24px">
+      <div style="text-align:left">
+        <div style="font-size:12px;color:#4caf50;font-weight:700;margin-bottom:8px">EVERYTHING IN PROFESSIONAL PLUS:</div>
+        <div style="font-size:13px;color:#aaa;padding:4px 0">✓ Unlimited officer devices</div>
+        <div style="font-size:13px;color:#aaa;padding:4px 0">✓ Dedicated support line</div>
+        <div style="font-size:13px;color:#aaa;padding:4px 0">✓ Custom branded APK with your logo</div>
+        <div style="font-size:13px;color:#aaa;padding:4px 0">✓ Custom branding consultation</div>
+        <div style="font-size:13px;color:#aaa;padding:4px 0">✓ SLA agreement available</div>
+        <div style="font-size:13px;color:#aaa;padding:4px 0">✓ On-site setup assistance</div>
+      </div>
+    </div>
+    <button class="select-btn" style="max-width:300px;margin:0 auto;background:#cc0000;border-color:#cc0000;font-size:15px;padding:14px"
+      onclick="showQuoteForm()">📋 Request a Quote</button>
+  </div>
+</div>
+
+<!-- ENTERPRISE QUOTE FORM -->
+<div class="container" id="quoteStep" style="display:none">
+  <div class="card">
+    <h3>🏢 Enterprise Quote Request</h3>
+    <p class="subtitle">Tell us about your operation and we will send you a custom quote within 24 hours.</p>
+    <form id="quoteForm">
+      <div class="section-label">Company Information</div>
+      <div class="form-group">
+        <label>Company Name <span class="req">*</span></label>
+        <input type="text" id="q_company" placeholder="Large Security Group (Pty) Ltd" required />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Approx. Number of Officers <span class="req">*</span></label>
+          <select id="q_officers" required>
+            <option value="">— Select —</option>
+            <option value="50-100">50 – 100 officers</option>
+            <option value="100-200">100 – 200 officers</option>
+            <option value="200-500">200 – 500 officers</option>
+            <option value="500+">500+ officers</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Approx. Number of Clients</label>
+          <select id="q_clients">
+            <option value="">— Select —</option>
+            <option value="under-500">Under 500</option>
+            <option value="500-2000">500 – 2,000</option>
+            <option value="2000-5000">2,000 – 5,000</option>
+            <option value="5000+">5,000+</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Special Requirements</label>
+        <textarea id="q_requirements" rows="3"
+          style="width:100%;background:#0f0f0f;border:1px solid #2a2a2a;border-radius:8px;padding:12px;color:#f0f0f0;font-size:14px;resize:vertical;outline:none"
+          placeholder="Custom integrations, multiple branches, specific features needed..."></textarea>
+      </div>
+      <div class="section-label">Contact Person</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="q_name" placeholder="John Smith" required />
+        </div>
+        <div class="form-group">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="q_email" placeholder="john@company.co.za" required />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Phone Number <span class="req">*</span></label>
+        <input type="tel" id="q_phone" placeholder="082 123 4567" required />
+      </div>
+      <div class="trial-info">
+        📋 We will review your requirements and send a <strong>custom quote within 24 hours.</strong>
+        Enterprise clients also receive a free 14-day trial before committing.
+      </div>
+      <div class="error-msg" id="quoteError"></div>
+      <button type="submit" class="submit-btn" id="quoteBtn">
+        <span>📋</span> Submit Quote Request
+      </button>
+      <p style="text-align:center;font-size:12px;color:#444;margin-top:12px">
+        <span style="cursor:pointer;color:#666;text-decoration:underline" onclick="showPricing()">↩ Back to pricing</span>
+      </p>
+    </form>
+  </div>
+</div>
+
+<!-- QUOTE SUCCESS -->
+<div class="success-wrap" id="quoteSuccess" style="display:none">
+  <div class="success-card">
+    <div class="icon">📋</div>
+    <h3>Quote Request Received!</h3>
+    <p>Thank you for your interest in our Enterprise plan. We will review your requirements and contact you within <strong>24 hours</strong> with a custom quote.</p>
+    <div style="background:#0f0f0f;border:1px solid #2a2a2a;border-radius:12px;padding:20px;margin:24px 0;text-align:left">
+      <div style="font-size:13px;color:#666;margin-bottom:8px">WHAT HAPPENS NEXT:</div>
+      <div style="font-size:13px;color:#aaa;padding:5px 0">✓ We review your requirements</div>
+      <div style="font-size:13px;color:#aaa;padding:5px 0">✓ Custom quote sent within 24 hours</div>
+      <div style="font-size:13px;color:#aaa;padding:5px 0">✓ Free 14-day trial included</div>
+      <div style="font-size:13px;color:#aaa;padding:5px 0">✓ Dedicated onboarding support</div>
+    </div>
+    <a href="index.html" class="apk-btn grey">← Back to Home</a>
   </div>
 </div>
 
@@ -355,9 +462,9 @@
   const CONFIG = {
     trialDays: 14,
     plans: {
-      starter:      { name: 'Starter',      price: 999,  maxDevices: 5,   label: 'Up to 5 officer devices' },
-      professional: { name: 'Professional', price: 1999, maxDevices: 15,  label: 'Up to 15 officer devices' },
-      enterprise:   { name: 'Enterprise',   price: 3499, maxDevices: 9999, label: 'Unlimited officer devices' },
+      starter:      { name: 'Starter',      price: 999,  maxDevices: 5,  label: 'Up to 5 officer devices' },
+      growth:       { name: 'Growth',       price: 2500, maxDevices: 15, label: 'Up to 15 officer devices' },
+      professional: { name: 'Professional', price: 6500, maxDevices: 50, label: 'Up to 50 officer devices' },
     }
   };
 
@@ -381,12 +488,57 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  function showQuoteForm() {
+    document.getElementById('pricingStep').style.display = 'none';
+    document.getElementById('quoteStep').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   function showPricing() {
     document.getElementById('pricingStep').style.display = 'block';
     document.getElementById('formStep').style.display = 'none';
+    document.getElementById('quoteStep').style.display = 'none';
+    document.getElementById('quoteSuccess').style.display = 'none';
     setStep(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  document.getElementById('quoteForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('quoteBtn');
+    const err = document.getElementById('quoteError');
+    err.style.display = 'none';
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner"></div> Sending...';
+
+    const company = document.getElementById('q_company').value.trim();
+    const officers = document.getElementById('q_officers').value;
+    const clients = document.getElementById('q_clients').value;
+    const requirements = document.getElementById('q_requirements').value.trim();
+    const name = document.getElementById('q_name').value.trim();
+    const email = document.getElementById('q_email').value.trim();
+    const phone = document.getElementById('q_phone').value.trim();
+
+    try {
+      // Save quote request to Firebase
+      await db.collection('quoteRequests').add({
+        company, officers, clients, requirements,
+        contactName: name, contactEmail: email, contactPhone: phone,
+        plan: 'enterprise',
+        status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+
+      document.getElementById('quoteStep').style.display = 'none';
+      document.getElementById('quoteSuccess').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch(err2) {
+      err.textContent = 'Something went wrong: ' + err2.message;
+      err.style.display = 'block';
+      btn.disabled = false;
+      btn.innerHTML = '<span>📋</span> Submit Quote Request';
+    }
+  });
 
   function setStep(n) {
     for (let i = 1; i <= 3; i++) {
