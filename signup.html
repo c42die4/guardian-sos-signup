@@ -6,6 +6,7 @@
   <title>Start Free Trial — Cyber Warriors</title>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; display: flex; flex-direction: column; }
@@ -103,6 +104,15 @@
     .apk-btn.grey:hover { background: #2a2a2a; }
     .error-msg { background: #1f0000; border: 1px solid #cc0000; border-radius: 8px; padding: 12px 16px; font-size: 14px; color: #ff6666; margin-top: 12px; display: none; }
     footer { background: #111; border-top: 1px solid #1f1f1f; padding: 16px 24px; text-align: center; font-size: 12px; color: #444; }
+    .upload-btn { background: #1f1f1f; border: 1px dashed #444; border-radius: 8px; padding: 12px; width: 100%; color: #aaa; font-size: 14px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .upload-btn:hover { border-color: #cc0000; color: #fff; }
+    .upload-preview { width: 60px; height: 60px; object-fit: contain; border-radius: 8px; border: 1px solid #2a2a2a; display: none; margin-top: 8px; }
+    .upload-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+    .rep-section { background: #0a0a1f; border: 1px solid #2a2a4a; border-radius: 10px; padding: 14px 18px; margin-top: 8px; }
+    .rep-section label { color: #8888cc; }
+    .test-badge { display: inline-flex; align-items: center; gap: 8px; background: #1a1a00; border: 1px solid #444400; border-radius: 8px; padding: 10px 14px; cursor: pointer; margin-top: 8px; width: 100%; }
+    .test-badge input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+    .test-badge span { color: #aaaa00; font-size: 13px; }
   </style>
 </head>
 <body>
@@ -347,8 +357,15 @@
           </div>
         </div>
         <div class="form-group">
-          <label>Logo URL <span style="color:#555">(optional)</span></label>
-          <input type="url" id="logo_url" placeholder="https://yoursite.com/logo.png" />
+          <label>Company Logo <span style="color:#555">(optional)</span></label>
+          <div class="upload-btn" onclick="document.getElementById('logoFile').click()">
+            <span>📁</span> <span id="uploadLabel">Click to upload your logo</span>
+            <div class="upload-spinner" id="uploadSpinner"></div>
+          </div>
+          <input type="file" id="logoFile" accept="image/*" style="display:none" onchange="uploadLogo(this)" />
+          <img id="logoPreview" class="upload-preview" />
+          <input type="hidden" id="logo_url" value="" />
+          <small style="color:#555;font-size:12px;display:block;margin-top:4px">Or paste a URL: <input type="url" id="logo_url_manual" placeholder="https://yoursite.com/logo.png" style="background:#0f0f0f;border:1px solid #1a1a1a;border-radius:4px;padding:4px 8px;color:#888;font-size:12px;width:280px" onchange="document.getElementById('logo_url').value=this.value" /></small>
         </div>
       </div>
       <div class="form-group">
@@ -371,6 +388,18 @@
       <div class="form-group">
         <label>Phone Number <span class="req">*</span></label>
         <input type="tel" id="contact_phone" placeholder="082 123 4567" required />
+      </div>
+
+      <div class="section-label">Representative Details</div>
+      <div class="rep-section">
+        <div class="form-group" style="margin-bottom:12px">
+          <label>Representative Code <span style="color:#555">(if you were referred by a rep)</span></label>
+          <input type="text" id="rep_code" placeholder="e.g. REP001" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()" />
+        </div>
+        <label class="test-badge">
+          <input type="checkbox" id="is_test" />
+          <span>🧪 This is a TEST account (rep testing only — not a real company)</span>
+        </label>
       </div>
 
       <div class="section-label">Free Trial</div>
@@ -456,6 +485,41 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+  emailjs.init('_WKuuF_twjhvg9Y9X');
+
+  // ImgBB API key for logo uploads
+  const IMGBB_KEY = '5c4e3e1b8e0b3e8f4c8e3e1b8e0b3e8f';
+
+  async function uploadLogo(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const spinner = document.getElementById('uploadSpinner');
+    const label = document.getElementById('uploadLabel');
+    const preview = document.getElementById('logoPreview');
+    spinner.style.display = 'inline-block';
+    label.textContent = 'Uploading...';
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      const res = await fetch('https://api.imgbb.com/1/upload?key=b3f0c8e7d2a1f6e4c9b8a7d3e2f1c0b9', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        const url = data.data.url;
+        document.getElementById('logo_url').value = url;
+        preview.src = url;
+        preview.style.display = 'block';
+        label.textContent = '✅ ' + file.name + ' uploaded';
+      } else {
+        label.textContent = '❌ Upload failed — please use URL instead';
+      }
+    } catch(e) {
+      label.textContent = '❌ Upload failed — please use URL instead';
+    }
+    spinner.style.display = 'none';
+  }
 
   // ── Plan definitions ─────────────────────────────────────────────────────────
   // To change trial days, pricing, or device limits — edit here only
@@ -594,6 +658,8 @@
     const emergencyPhone = document.getElementById('emergency_phone').value.trim();
     const logoUrl = document.getElementById('logo_url').value.trim();
     const primaryColor = document.getElementById('primary_color').value.trim().replace('#', '');
+    const repCode = document.getElementById('rep_code').value.trim().toUpperCase();
+    const isTest = document.getElementById('is_test').checked;
     const plan = CONFIG.plans[selectedPlan];
 
     btn.disabled = true;
@@ -616,16 +682,45 @@
         maxDevices:    plan.maxDevices,
         officerCode,
         clientCode,
-        isActive:      true,        // Live immediately
+        isActive:      !isTest,     // Test accounts start suspended
         isTrial:       true,
-        trialDays:     CONFIG.trialDays,
+        isTest:        isTest,
+        trialDays:     isTest ? 3 : CONFIG.trialDays,
         trialEnds:     trialEnd,
         plan:          selectedPlan,
         planName:      plan.name,
         planPrice:     plan.price,
-        billingStatus: 'trial',     // trial | active | suspended
+        repCode:       repCode || 'direct',
+        billingStatus: isTest ? 'test' : 'trial',
         createdAt:     firebase.firestore.FieldValue.serverTimestamp(),
       });
+
+      // Send notification email to admin
+      try {
+        await emailjs.send('service_sxhcn8m', 'template_qox5nkh', {
+          company_name: (isTest ? '🧪 TEST: ' : '🎉 NEW: ') + companyName,
+          contact_name: 'Christo',
+          contact_email: 'christo.prinsloo@gmail.com',
+          contact_phone: '',
+          device_count: plan.name,
+          logo_url: logoUrl || 'None',
+          primary_color: '#' + primaryColor,
+          registration_code: [
+            'Company: ' + companyName,
+            'Plan: ' + plan.name + ' — R' + plan.price + '/month',
+            'Contact: ' + contactName + ' — ' + contactEmail + ' — ' + contactPhone,
+            'Rep Code: ' + (repCode || 'direct'),
+            'Test Account: ' + (isTest ? 'YES' : 'No'),
+            'Officer Code: ' + officerCode,
+            'Client Code: ' + clientCode,
+            'Trial Ends: ' + trialEnd,
+          ].join('
+'),
+          company_id: companyId,
+        });
+      } catch(emailErr) {
+        console.log('Email notification failed:', emailErr);
+      }
 
       // Show success screen
       document.getElementById('formStep').style.display = 'none';

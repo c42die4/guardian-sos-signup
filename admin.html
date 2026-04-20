@@ -150,7 +150,19 @@
   <div class="section">
     <div class="section-header">
       <div id="quoteSection" style="margin-bottom:24px"></div>
-      <h2>Companies</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <h2 style="margin:0">Companies</h2>
+        <div style="display:flex;align-items:center;gap:12px">
+          <label style="font-size:13px;color:#888;display:flex;align-items:center;gap:6px;cursor:pointer">
+            <input type="checkbox" id="hideTests" checked onchange="loadCompanies()" />
+            Hide test accounts
+          </label>
+          <label style="font-size:13px;color:#888;display:flex;align-items:center;gap:6px;cursor:pointer">
+            Rep filter:
+            <input type="text" id="repFilter" placeholder="REP001" style="background:#0f0f0f;border:1px solid #2a2a2a;border-radius:4px;padding:4px 8px;color:#f0f0f0;font-size:12px;width:80px" onchange="loadCompanies()" />
+          </label>
+        </div>
+      </div>
       <button class="btn btn-red btn-sm" onclick="openNewCompany()">+ New Company</button>
     </div>
     <div class="table-wrap">
@@ -345,7 +357,22 @@
         if (cid) deviceCounts[cid] = (deviceCounts[cid] || 0) + 1;
       });
 
-      tbody.innerHTML = snapshot.docs.map(doc => {
+      const hideTests = document.getElementById('hideTests')?.checked ?? true;
+      const repFilter = (document.getElementById('repFilter')?.value || '').trim().toUpperCase();
+
+      const filteredDocs = snapshot.docs.filter(doc => {
+        const d = doc.data();
+        if (hideTests && d.isTest) return false;
+        if (repFilter && (d.repCode || '').toUpperCase() !== repFilter) return false;
+        return true;
+      });
+
+      if (filteredDocs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-row">No companies match the current filter.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filteredDocs.map(doc => {
         const d = doc.data();
         const color = d.primaryColor ? '#' + d.primaryColor.replace('#','') : '#cc0000';
         const deviceCount = deviceCounts[doc.id] || 0;
@@ -366,12 +393,15 @@
             <div style="font-size:12px;color:#666">${escHtml(d.contactEmail || '')}</div>
             ${d.planName ? `<div style="font-size:11px;color:#cc0000;margin-top:2px">${escHtml(d.planName)} · R${(d.planPrice||0).toLocaleString()}/mo</div>` : ''}
             ${d.trialEnds ? `<div style="font-size:11px;color:#ffcc02;margin-top:2px">Trial ends: ${escHtml(d.trialEnds)}</div>` : ''}
+            ${d.repCode && d.repCode !== 'direct' ? `<div style="font-size:11px;color:#8888cc;margin-top:2px">Rep: ${escHtml(d.repCode)}</div>` : ''}
+            ${d.isTest ? `<div style="font-size:11px;color:#aaaa00;margin-top:2px">⚠️ TEST ACCOUNT</div>` : ''}
           </td>
           <td>
             <span style="font-weight:600">${deviceCount}</span>
             <span style="color:#555"> / ${d.maxDevices || 10}</span>
           </td>
           <td>
+            ${d.isTest ? '<span class="badge" style="background:#2a2a00;color:#aaaa00;border:1px solid #444400">🧪 TEST</span> ' : ''}
             <span class="badge ${isActive ? 'badge-green' : 'badge-red'}">
               ${isActive ? (d.isTrial ? '🎯 Trial' : 'Active') : 'Suspended'}
             </span>
