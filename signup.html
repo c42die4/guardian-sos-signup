@@ -396,10 +396,10 @@
           <label>Representative Code <span style="color:#555">(if you were referred by a rep)</span></label>
           <input type="text" id="rep_code" placeholder="e.g. REP001" style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()" />
         </div>
-        <label class="test-badge">
-          <input type="checkbox" id="is_test" />
-          <span>🧪 This is a TEST account (rep testing only — not a real company)</span>
-        </label>
+        <div class="test-badge" onclick="document.getElementById('is_test').click()">
+          <input type="checkbox" id="is_test" onclick="event.stopPropagation()" />
+          <span id="testLabel">🧪 This is a TEST account (rep testing only — not a real company)</span>
+        </div>
       </div>
 
       <div class="section-label">Free Trial</div>
@@ -507,10 +507,11 @@
       });
       const data = await res.json();
       if (data.success) {
-        const url = data.data.url;
+        const url = data.data.display_url || data.data.url;
         document.getElementById('logo_url').value = url;
         preview.src = url;
         preview.style.display = 'block';
+        preview.style.marginTop = '8px';
         label.textContent = '✅ ' + file.name + ' uploaded';
       } else {
         label.textContent = '❌ Upload failed — please use URL instead';
